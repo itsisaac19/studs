@@ -288,6 +288,53 @@ const addLittleCourseCard = (course) => {
     littleGrid.appendChild(card);
 }
 
+const latestAssignmentsList = (rawAssignments) => {
+  const latestGrid = document.querySelector('.latest-grid');
+  
+  let count = 0;
+
+  console.log({rawAssignments})
+
+  Object.keys(rawAssignments).sort().reverse().forEach(date => {
+    if (count > 6) return;
+
+    let assignments = rawAssignments[date];
+
+    console.log({
+      assignments
+    })
+
+    for (const a of assignments) {
+      if (count > 6) break;
+
+      console.log({date, a, count})
+
+      let scoreBarWidth = (a.essential.points / a.essential.pointsPossible).toFixed(2) * 100
+
+      const card = Object.assign(document.createElement('div'), {
+        className: 'latest-assignment',
+        innerHTML: `
+          <div class="as-info">
+              <div class="as-title">${a.Measure.value}</div>
+              <div class="as-due-date">${a.DueDate.value}</div>
+          </div>
+  
+          <div class="score-box">
+              <div class="score-bar" style="width: ${scoreBarWidth}%"></div>
+              <div class="score">${a.essential.points}</div>
+              <div class="score-divide">/</div>
+              <div class="potential-score">${a.essential.pointsPossible}pts</div>
+          </div>
+          <div class="as-teacher">${a.teacher}</div>
+      `
+      })
+  
+      latestGrid.appendChild(card);
+      count++
+    }
+  });
+}
+
 const iGPA = (letter) => {
   let scale = {
     'A+': 4.0,
@@ -382,6 +429,7 @@ const cumulativeGradePointAverageGraph = (courses, start, step) => {
   // {start} represents the leftmost side of the graph
   // {step} represents the size of which the graph increments 
   const allAssignments = {};
+  const allAssignmentsRaw = {};
   let buckets = [];
 
   // Buckets are calculated as a function of {step} in the duration from {start} to now
@@ -440,19 +488,28 @@ const cumulativeGradePointAverageGraph = (courses, start, step) => {
         type,
         weight
       }
+
+      let raw = structuredClone(a);
+      raw.teacher = c.Staff.value;
+      raw.essential = essential;
       
       let endOfDueDate = dayjs(essential.dueDate, "M/D/YYYY").endOf('day').unix();
 
       if (allAssignments[endOfDueDate]) {
         allAssignments[endOfDueDate].push(essential)
+        allAssignmentsRaw[endOfDueDate].push(raw)
       } else {
         allAssignments[endOfDueDate] = [essential];
+        allAssignmentsRaw[endOfDueDate] = [raw];
       }
     })
   })
 
   console.groupCollapsed('Assignments by due date')
-  console.log(allAssignments)
+  console.log({
+    allAssignments,
+    allAssignmentsRaw
+  })
   console.groupEnd();
 
   let courseCumulativeGPAs = {}
@@ -712,7 +769,9 @@ const cumulativeGradePointAverageGraph = (courses, start, step) => {
   const graph = new Chart(graphElement, {
     type: 'line',
     data: {
-        labels: buckets.map(x => x.readableDate),
+        labels: buckets.map(x => {
+          return `${x.readableDate.slice(0, 3)} ${x.readableDate.slice(3)}`
+        }),
         datasets: [{
           label: 'ctGPA',
           backgroundColor: '#000',
@@ -744,7 +803,12 @@ const cumulativeGradePointAverageGraph = (courses, start, step) => {
     }
   })
 
+  latestAssignmentsList(allAssignmentsRaw);
 }
 
 
 checkExistingUser();
+
+document.querySelector('.top-bar > .studs').addEventListener('click', () => {
+  window.location.reload();
+})
