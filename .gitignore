@@ -3,5 +3,6 @@ dev/bundle.js
 dev/vendors-node_modules_chart_js_auto_auto_mjs.bundle.js
 *.config.js
 template.html
-dist/*.js
+dist/index.js
+dist/indexCSS.js
 *.txt
