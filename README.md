@@ -9,7 +9,7 @@ Looking for the website code? Look in the "src" folder for the scripting, and th
   + Cumulative GPA history
 + Intuitive and efficient design
   + Uses every corner of the screen to maximize data visibility and comprehension
-  + WCAG (Web Accessibility Initiative) 2.2 compliant
+  + WCAG 2.1 level AA Compliant
   
 # Performance  
 
