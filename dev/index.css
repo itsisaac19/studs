@@ -87,11 +87,13 @@ body {
   font-size: 1.4em;
   font-weight: 500;
   letter-spacing: 0.1em;
+  color: black;
 }
 
-header.main {
+div.main {
   margin: 10vh 35px 35px 10vh;
   text-align: left;
+  color: black;
 }
 
 .main h1 {
@@ -236,6 +238,16 @@ h1 .slow {
   line-height: 1.5em;
   font-size: 16px;
 }
+.privacy-wrap .question {
+  font-size: 14px;
+  font-weight: 600;
+  color: #141414;
+}
+.privacy-wrap .content {
+  font-size: 14px;
+  color: #454545;
+}
+
 
 .about {
   cursor: pointer;
@@ -318,7 +330,7 @@ section.why h2.listen {
     font-size: 1.2em;
   }
 
-  header.main {
+  div.main {
     margin: 10vh 8vw 35px 8vw;
   }
 
@@ -359,6 +371,11 @@ section.why h2.listen {
 
   #password {
     font-size: 16px;
+  }
+
+  .privacy-wrap {
+    margin: 0 8vw 0px 8vw;
+    width: auto;
   }
 }
 

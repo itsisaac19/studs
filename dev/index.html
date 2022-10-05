@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>STUDS</title>
+    <title>Studs - A blazing fast StudentVUE client</title>
     <meta name="description" content="A blazing fast StudentVUE client.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,7 +16,7 @@
 <body>
     <div id="app" class="">
         <div class="studs">STUDS</div>
-        <header class="main">
+        <div role="main" class="main">
             <h1>
                 StudentVUE - but it isn't super <br>
                 <span class="slow">slooooooow. </span>
@@ -27,26 +27,24 @@
                 <a href="https://www.moundsviewschools.org/moundsview">Mounds View High School</a>
                 students.
             </span>
-        </header>
+        </div>
         <div class="auth-form">
             <button id="signInAs" class="hide">Sign in as</button>
-            <input type="email" name="" id="email" placeholder="StudentVUE Email" />
-            <input type="password" name="" id="password" placeholder="StudentVUE Password" />
+            <input aria-label="email" type="email" name="" id="email" placeholder="StudentVUE Email" />
+            <input aria-label="password" type="password" name="" id="password" placeholder="StudentVUE Password" />
             <button id="login" class="">Sign in</button>
         </div>
         <div class="privacy-wrap">
-            <h3>Privacy? Lockdown.</h3>
-            <p>
+            <p class="question">How we use your data (we don't)</p>
+            <p class="content">
                 Your login info is <u><b>never</b></u> shared, saved, or sold. Period.
                 <br>
                 Your StudentVUE data is <u><b>never</b></u> shared, saved, or sold. Period.
-                <br><br>
-                Are we beginning to sound like a broken record?  
-                All of the website code is openly sourced on Github.
+                <br><br> 
+                All of the website code is open for viewing <a href="https://github.com/itsisaac19/studs">on Github</a>.
             </p>
-            <a href="https://github.com/itsisaac19/studs">View the code</a>
         </div>
-        <div class="about">about</div>
+        <div class="about" role="button" tabindex="0">about</div>
 
         <section class="why">
             <h2>The big question — Why?</h2>
@@ -67,7 +65,7 @@
             <h2 class="listen">We're listening to the parents and students</h2>
             <p class="explain-3">
                 We're responding to the endless complaints. And that's not an
-                exagerration — there's currently over 10,000 one-star reviews on the
+                exaggeration — there's currently over 10,000 one-star reviews on the
                 app store.
             </p>
         </section>

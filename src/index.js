@@ -766,6 +766,7 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
   const chartjs = await import('chart.js/auto');
   const Chart = chartjs.default;
   
+  Chart.defaults.font.family = 'Inter'
   const graph = new Chart(graphElement, {
     type: 'line',
     data: {
@@ -777,7 +778,7 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
           backgroundColor: '#000',
           borderColor: '#585858',
           data: graphData,
-          tension: 0.3
+          tension: 0.2
         }],
     },
     options: {
