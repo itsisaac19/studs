@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>STUDS</title>
+    <meta name="description" content="A blazing fast StudentVUE client.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div id="app" class="">
+        <div class="studs">STUDS</div>
+        <header class="main">
+            <h1>
+                StudentVUE - but it isn't super <br>
+                <span class="slow">slooooooow. </span>
+            </h1>
+            <span>An enhanced experience of
+                <a href="https://edupoint.com/Products/ParentVUE-StudentVUE" class="sv">
+                    StudentVUE </a>&nbsp;&nbsp;&nbsp; for
+                <a href="https://www.moundsviewschools.org/moundsview">Mounds View High School</a>
+                students.
+            </span>
+        </header>
+        <div class="auth-form">
+            <button id="signInAs" class="hide">Sign in as</button>
+            <input type="email" name="" id="email" placeholder="StudentVUE Email" />
+            <input type="password" name="" id="password" placeholder="StudentVUE Password" />
+            <button id="login" class="">Sign in</button>
+        </div>
+        <div class="privacy-wrap">
+            <h3>Privacy? Lockdown.</h3>
+            <p>
+                Your login info is <u><b>never</b></u> shared, saved, or sold. Period.
+                <br>
+                Your StudentVUE data is <u><b>never</b></u> shared, saved, or sold. Period.
+                <br><br>
+                Are we beginning to sound like a broken record?  
+                All of the website code is openly sourced on Github.
+            </p>
+            <a href="https://github.com/itsisaac19/studs">View the code</a>
+        </div>
+        <div class="about">about</div>
+
+        <section class="why">
+            <h2>The big question — Why?</h2>
+            <p class="explain">
+                We're tired of the laggy websites and slow loading times. The buggy
+                app that seems to prevent us from seeing that AP score, that one exam
+                we never studied for, that one test that we actually felt good about.
+            </p>
+            <p class="explain-2">
+                With STUDS, we reimagined your StudentVUE experience.
+            </p>
+            <ul class="e-list">
+                <li>You <i>understand</i> what you're looking at.</li>
+                <li>It doesn't take decades for you to navigate between courses.</li>
+                <li>Better statistics</li>
+            </ul>
+
+            <h2 class="listen">We're listening to the parents and students</h2>
+            <p class="explain-3">
+                We're responding to the endless complaints. And that's not an
+                exagerration — there's currently over 10,000 one-star reviews on the
+                app store.
+            </p>
+        </section>
+    </div>
+
+    <div id="dashboard" class="hide">
+        <div class="main-grid">
+            <div class="top-bar">
+                <div class="studs">STUDS</div>
+                <div class="home active">HOME</div>
+                <div class="grades">GRADES</div>
+                <div class="messages">MESSAGES</div>
+                <div class="attendance">ATTENDANCE</div>
+            </div>
+
+            <div class="main-content">
+                <div class="little-grid">
+                </div>
+
+                <div class="main-card">
+                    <div class="gpa-header">CUMULATIVE GPA <span class="gpa-value"></span></div>
+                    <div class="graph-wrap">
+                        <canvas id="gpa-graph" style="max-width: 100%;"></canvas>
+                    </div>
+                </div>
+                <div class="sub-card">
+                    <div class="latest-label">Latest Graded Assignments</div>
+                    <div class="latest-grid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="bundle.js"></script>
+</html>

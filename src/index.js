@@ -361,10 +361,6 @@ const iGPA = (letter) => {
   return
 }
 
-
-import { CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement } from 'chart.js';
-Chart.register(LineController, LinearScale, CategoryScale, PointElement, LineElement);
-
 const gradePointAverageFromPercent = (percent) => {
     let GPA;
 
@@ -425,7 +421,7 @@ const letterGradeToFourPointScale = (letter) => {
     return num;
 }
 
-const cumulativeGradePointAverageGraph = (courses, start, step) => {
+const cumulativeGradePointAverageGraph = async (courses, start, step) => {
   // {start} represents the leftmost side of the graph
   // {step} represents the size of which the graph increments 
   const allAssignments = {};
@@ -765,7 +761,11 @@ const cumulativeGradePointAverageGraph = (courses, start, step) => {
   const graphData = buckets.map(x => x.ctGPA);
   console.log({buckets, graphData});
 
-  const graphElement = document.getElementById('gpa-graph')
+  const graphElement = document.getElementById('gpa-graph');
+
+  const chartjs = await import('chart.js/auto');
+  const Chart = chartjs.default;
+  
   const graph = new Chart(graphElement, {
     type: 'line',
     data: {
