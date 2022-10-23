@@ -242,7 +242,14 @@ const initDashboard = async (storeCachedTime=false) => {
         addLittleCourseCard(course);
     });
 
-    cumulativeGradePointAverageGraph(gradebook.Courses.Course, dayjs().subtract(2, 'week'), 'day');
+    let initialDiff;
+    if (window.innerWidth < 600) {
+      initialDiff = dayjs().subtract(4, 'week');
+    } else {
+      initialDiff = dayjs().subtract(4, 'week');
+    }
+
+    cumulativeGradePointAverageGraph(gradebook.Courses.Course, initialDiff, 'day');
 
 
     return gradebook;
@@ -267,8 +274,8 @@ const addLittleCourseCard = (course) => {
     }
 
     const littleGrid = document.querySelector('.little-grid');
-    const card = Object.assign(document.createElement('div'), {
-        className: 'little-course-card',
+    const card = Object.assign(document.createElement('button'), {
+        className: 'little-course-card strip-button-styles',
         innerHTML: `
             <div class="course-info"> 
               <div class="course-name">${courseName}</div>
@@ -278,7 +285,8 @@ const addLittleCourseCard = (course) => {
                 <span class="grade-value">${courseGrade}</span>
                 <span class="grade-raw">${courseGradeRaw}</span>
             </div>
-        `
+        `,
+        tabIndex: 0
     });
 
     if (courseGrade == 'N/A') {
@@ -286,6 +294,27 @@ const addLittleCourseCard = (course) => {
     }
 
     littleGrid.appendChild(card);
+}
+
+const populateCourseAssignments = (rawAssignments) => {
+  document.querySelector('large-course-card');
+
+  const card = Object.assign(document.createElement('div'), {
+    className: 'large',
+    innerHTML: `
+        <div class="course-info"> 
+          <div class="course-name">${courseName}</div>
+          <div class="course-period">Period ${coursePeriod}</div>
+        </div>
+        <div class="grade">
+            <span class="grade-value">${courseGrade}</span>
+            <span class="grade-raw">${courseGradeRaw}</span>
+        </div>
+    `,
+    tabIndex: 0
+  });
+
+// etc...
 }
 
 const latestAssignmentsList = (rawAssignments) => {
@@ -310,6 +339,10 @@ const latestAssignmentsList = (rawAssignments) => {
       console.log({date, a, count})
 
       let scoreBarWidth = (a.essential.points / a.essential.pointsPossible).toFixed(2) * 100
+
+      if (a.essential.points == a.essential.pointsPossible) {
+        scoreBarWidth = 100;
+      }
 
       const card = Object.assign(document.createElement('div'), {
         className: 'latest-assignment',
@@ -520,6 +553,10 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
       console.log(a)
       let points = a.points;
 
+      if (a.points == 0 && a.pointsPossible == 0) {
+        return;
+      } 
+
       console.log(dayjs(date, 'X').format('MMMD'), `${points} / ${a.pointsPossible}`)
       if (courseCumulativeGPAs[a.courseTitle]) {
 
@@ -582,7 +619,6 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
 
         let total = w.points;
         let maxTotal = w.maxPoints;
-        //console.log(total)
 
         if (courseCumulativeGPAs[courseName].prevTotal?.[weight]) {
           total += courseCumulativeGPAs[courseName].prevTotal[weight].pointsTotal;
@@ -737,7 +773,8 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
         return letterGradeToFourPointScale(regular);
     })
 
-    let sum = adjustedTGPAs.reduce((a,b) => (a+b));
+    let sumAdjusted = adjustedTGPAs.reduce((a,b) => (a+b)); 
+    let sum = tGPAs.reduce((a,b) => (a+b));
     let average = sum / adjustedTGPAs.length;
     bucket.ctGPA = average.toFixed(2);
 
@@ -793,7 +830,10 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
             min: min
           },
           xAxis: {
-
+            ticks: {
+              autoSkip: true,
+              
+            }
           }
         },
         plugins: {
@@ -802,7 +842,15 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
           }
         }
     }
-  })
+  });
+
+  let viewSwitcherInput = document.getElementById('gpa-view');
+  viewSwitcherInput.addEventListener('input', (e) => {
+    updateGraphView(graph, e.currentTarget.value, buckets);
+  });
+
+  console.log(viewSwitcherInput)
+  
 
   latestAssignmentsList(allAssignmentsRaw);
 }
@@ -812,4 +860,50 @@ checkExistingUser();
 
 document.querySelector('.top-bar > .studs').addEventListener('click', () => {
   window.location.reload();
-})
+});
+
+
+const updateGraphView = (graph, view, bucketsData) => {
+  console.log(graph)
+  let buckets;
+
+  if (view == 'all-time') {
+    buckets = bucketsData.slice()
+    console.warn('all-time')
+  }
+
+  if (view == 'six-month') {
+    let sixMonthsAgo = dayjs().subtract(6, 'month');
+    let daysDiff = dayjs().diff(sixMonthsAgo, 'day');
+
+    buckets = bucketsData.slice(-daysDiff);
+    console.warn('six-month')
+  }
+
+  if (view == 'month') {
+    let monthAgo = dayjs().subtract(1, 'month');
+    let daysDiff = dayjs().diff(monthAgo, 'day');
+
+    buckets = bucketsData.slice(-daysDiff);
+    console.warn('month', daysDiff, bucketsData)
+  }
+
+  if (view == 'week') {
+    let weekAgo = dayjs().subtract(1, 'week');
+    let daysDiff = dayjs().diff(weekAgo, 'day');
+
+    buckets = bucketsData.slice(-daysDiff);
+  }
+
+  graph.data.datasets.data = buckets.map(x => x.ctGPA);
+  graph.data.labels = buckets.map(x => {
+    return `${x.readableDate.slice(0, 3)} ${x.readableDate.slice(3)}`
+  });
+
+  const min = Math.min(...buckets.map(x => x.ctGPA)) - 1;
+  if (min < 0) min = 0;
+  graph.options.scales['yAxis'].min = min;
+
+  console.warn(graph.data)
+  graph.update();
+}

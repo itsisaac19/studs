@@ -37,10 +37,8 @@
         <div class="privacy-wrap">
             <p class="question">How we use your data (we don't)</p>
             <p class="content">
-                Your login info is <u><b>never</b></u> shared, saved, or sold. Period.
+                Your login info and StudentVUE data is <u><b>never</b></u> shared, saved, or sold. Period.
                 <br>
-                Your StudentVUE data is <u><b>never</b></u> shared, saved, or sold. Period.
-                <br><br> 
                 All of the website code is open for viewing <a href="https://github.com/itsisaac19/studs">on Github</a>.
             </p>
         </div>
@@ -81,12 +79,24 @@
                 <div class="attendance">ATTENDANCE</div>
             </div>
 
-            <div class="main-content">
+            <div class="dashboard main-content">
                 <div class="little-grid">
                 </div>
 
                 <div class="main-card">
-                    <div class="gpa-header">CUMULATIVE GPA <span class="gpa-value"></span></div>
+                    <div class="gpa-header">
+                        <div class="title">
+                            CUMULATIVE GPA <span class="gpa-value"></span>
+                        </div>
+                        <div class="c-gpa-view-input">
+                            <select name="" id="gpa-view">
+                                <option value="all-time">All time</option>
+                                <option value="six-month">6 Months</option>
+                                <option value="month">Month</option>
+                                <option value="week">Week</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="graph-wrap">
                         <canvas id="gpa-graph" style="max-width: 100%;"></canvas>
                     </div>
@@ -96,6 +106,19 @@
                     <div class="latest-grid">
                     </div>
                 </div>
+            </div>
+
+            <div class="course-grades main-content">
+                <div class="large-course-card">
+                    <!--Populate info-->
+                </div>
+                <div class="large-course-card">
+                    <!--Populate info-->
+                </div>
+                <div class="large-course-card">
+                    <!--Populate info-->
+                </div>
+                <!--Etc..-->
             </div>
         </div>
     </div>
