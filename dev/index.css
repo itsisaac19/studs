@@ -1,3 +1,6 @@
+
+
+
 /* latin */
 @font-face {
   font-family: 'Inter';
@@ -99,6 +102,8 @@ div.main {
 .main h1 {
   font-size: 48px;
   font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -2px;
 }
 
 h1 .slow {
@@ -283,26 +288,26 @@ section.why h2 {
   font-size: 1.8em;
   font-weight: 500;
 
-  text-align: center;
+  text-align: left;
   margin: 45px auto;
 }
 
 section.why .explain {
   padding: 0px 0 20px 0;
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
   line-height: 1.4em;
   max-width: 800px;
-  width: 75vw;
+  width: 84vw;
 }
 
 .explain-2 {
-  padding: 50px 0 20px 0;
+  padding: 30px 0 20px 0;
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
   line-height: 1.4em;
   max-width: 800px;
-  width: 75vw;
+  width: 84vw;
 }
 
 .e-list {
@@ -312,16 +317,19 @@ section.why .explain {
 
 section.why h2.listen {
   margin: 100px auto 45px auto;
-  text-align: center;
+  text-align: left;
 }
 
 .explain-3 {
-  padding: 0px 0 150px 0;
+  padding: 0px 0 0px 0;
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
   line-height: 1.4em;
   max-width: 800px;
-  width: 75vw;
+  width: 84vw;
+}
+.explain-3.last {
+  padding-bottom: 100px;
 }
 
 @media screen and (max-width: 600px) {
@@ -331,7 +339,7 @@ section.why h2.listen {
   }
 
   div.main {
-    margin: 10vh 8vw 35px 8vw;
+    margin: 8vh 8vw 35px 8vw;
   }
 
   .main h1 {
@@ -343,12 +351,12 @@ section.why h2.listen {
   }
 
   section.why h2.listen {
-    margin: 100px 8vw 45px 8vw;
+    margin: 20px 8vw 25px 8vw;
     font-size: 1.4em;
   }
 
   section.why h2 {
-    margin: 45px 8vw;
+    margin: 5px 8vw 25px;
     font-size: 1.4em;
   }
 
@@ -414,7 +422,6 @@ section.why h2.listen {
   background: white;
   width: auto;
   height: 100%;
-  place-items: center;
 
   border-bottom: 2px solid #EBEBEB;
   box-sizing: border-box;
@@ -425,7 +432,7 @@ section.why h2.listen {
   font-weight: 600;
   letter-spacing: 1px;
   color: rgb(27, 27, 27);
-  padding: 0 20px;
+  padding: 21.5px 25px;
   box-shadow: inset 0px 2px 0px rgb(204, 204, 204), inset -2px 0px 0px #EBEBEB;
 }
 
@@ -451,9 +458,12 @@ section.why h2.listen {
   display: grid;
 }
 .top-bar {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(27, 27, 27);
+  letter-spacing: 1px;
+  text-transform: uppercase;
   font-family: inherit;
-  font-size: 16px;
-  color: inherit;
 
   cursor: pointer;
   border: none;
@@ -467,6 +477,13 @@ section.why h2.listen {
   text-indent: 10px;
   padding: 0 0 0 0px;
   margin: 0px 0 0 0;
+}
+.top-bar:focus-visible {
+  outline: none;
+}
+.top-bar-select-wrapper:hover, .top-bar-select-wrapper:focus {
+  border-top-color: rgb(75 75 75);
+  outline: none;
 }
 
 .main-content {
@@ -504,6 +521,7 @@ div.little-grid {
 	color: inherit;
 	border: none;
 	padding: 0;
+  margin: 0;
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
@@ -599,11 +617,12 @@ div.little-grid {
 
 .main-card {
   margin: 0px auto 20px auto;
-  padding: 30px;
+  padding: 20px;
   background: rgb(245, 245, 245);
+  border-top: 2px solid rgba(228, 228, 228, 1);
 
   height: 380px;
-  width: calc(100% - 60px);
+  width: calc(100% - 40px);
   max-width: 1920px;
 
   display: grid;
@@ -658,6 +677,8 @@ div.little-grid {
   border-radius: 7px;
   background: rgb(233 233 233);
   color: #222;
+
+  text-indent: 4px;
 
   font-family: inherit;
 }
@@ -737,6 +758,10 @@ div.little-grid {
 }
 .score-box[ungraded="true"] {
   width: max-content;
+}
+.score-box[ungraded="true"] {
+  background: none;
+  grid-template-columns: 1fr;
 }
 .score-bar {
   position: absolute;
@@ -882,6 +907,99 @@ div.little-grid {
   color: #6f6f6f;
 }
 
+.large-course-card .grade-calc {
+  margin: 10px 0 0 0;
+  padding: 10px 18px 10px 13px;
+  display: grid;
+  height: 35px;
+}
+.large-course-card .grade-calc-box {
+  display: grid;
+  grid-auto-flow: column;
+
+  background: rgb(240, 240, 240);
+  border-radius: 7px;
+}
+.large-course-card .grade-calc-category {
+  display: grid;
+}
+.grade-calc-category:nth-child(1) {
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+.grade-calc-category:last-child {
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+.grade-calc-category .category-label {
+  margin: auto auto;
+  font-size: 13px;
+}
+
+.large-course-card .category-label {
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 5px;
+}
+.category-label .label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0 0px 0 13px;
+}
+.category-label .value {
+  margin: 0px 10px 0 0;
+}
+
 .large-course-card .course-assignments {
   margin: 20px 0 0 0;
+}
+
+.large-course-card .course-assignments .assignment {
+  cursor: pointer;
+  height: 75px;
+  background: rgb(245, 245, 245);
+  outline: 1px solid rgba(228, 228, 228, 1);
+  padding: 0 20px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 7fr 4fr;
+  transition: background 0.2s linear, outline 0.2s linear;
+}
+
+.assignment.important {
+  box-shadow: inset 6px 0px 0px rgb(11, 51, 59);
+}
+.assignment.regular {
+  box-shadow: inset 6px 0px 0px rgb(134, 158, 163);
+} 
+
+.large-course-card .as-info {
+  grid-template-columns: max-content 1fr;
+  column-gap: 10px;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+  'title title' 
+  'date type';
+}
+.large-course-card .as-title {
+  grid-area: title;
+  font-size: 13px;
+}
+.large-course-card .as-due-date {
+  grid-area: date;
+  font-size: 13px;
+}
+.large-course-card .as-category {
+  grid-area: type;
+  font-size: 13px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.large-course-card .score-box .score-divide {
+  margin: 8.5px auto auto 5px;
 }

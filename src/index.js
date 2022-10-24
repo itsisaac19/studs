@@ -275,6 +275,13 @@ const littleCourseCardHandler = (e) => {
   let selectedCourseButton = document.querySelector(`.course-slider[id="${selectedCourseId}"]`);
   selectedCourseButton.dispatchEvent(new Event('click', {bubbles:true}));
   
+  let sliderWrapper = document.querySelector(`.courses-slider-wrapper`)
+  sliderWrapper.scrollLeft = 0;
+
+  let buttonRect = selectedCourseButton.getBoundingClientRect();
+  console.log(buttonRect);
+  sliderWrapper.scrollLeft = buttonRect.left - 10;
+
   window.scrollTo({
     top: 0,
     behavior: 'smooth'
@@ -318,6 +325,45 @@ const addLittleCourseCard = (course) => {
     littleGrid.appendChild(card);
 }
 
+const getBackgroundAndColorFromValue = (decOrPercent) => {
+  let reverse;
+
+  if (decOrPercent.length) {
+    reverse = 100 - decOrPercent.replace('%', '');
+  } else {
+    reverse = 100 - (decOrPercent * 100);
+  }
+
+  let background = `hsl(177, 13%, ${reverse}%)`;
+  let lighter = `hsl(177, 13%, ${reverse + 10 > 100 ? 100 : reverse + 10}%)`;
+  let darker = `hsl(177, 13%, ${reverse - 10 < 0 ? 0 : reverse - 10}%)`;
+
+  let color = 'black';
+
+  if (reverse < 50) {
+    color = 'white'
+  }
+
+  let border  = {
+    suggested: false,
+  };
+
+  if (reverse + 10 >= 100) {
+    border = {
+      suggested: true,
+      style: '1px solid #c3cdcd'
+    }
+  }
+  if (reverse - 10 < 0) {
+/*     border = {
+      suggested: true,
+      style: '1px solid #c3cdcd'
+    } */
+  }
+
+  return [background, color, lighter, darker, border]
+}
+
 const addLargeCourseCard = (course) => {
   const parent = document.querySelector('.course-grades');
   let courseName = course.Title.value;
@@ -341,11 +387,45 @@ const addLargeCourseCard = (course) => {
             <span class="grade-value">${courseGrade}</span>
             <span class="grade-raw">${courseGradeRaw}</span>
         </div>
+        <div class="grade-calc">
+            <div class="grade-calc-box">
+
+            </div>
+        </div>
         <div class="course-assignments"> 
 
         </div>
     `,
   }); 
+
+  const gradeCategory = (label, weight) => Object.assign(document.createElement('div'), {
+    className: 'grade-calc-category',
+    innerHTML: `
+        <div class="category-label">
+          <div class="label">${label}</div>
+          <div class="value">(${weight})</div>
+        </div>
+    `,
+  }); 
+
+  let categories = course.Marks.Mark.GradeCalculationSummary.AssignmentGradeCalc || [{
+    Type: {value: 'All grades'},
+    Weight: {value: '100%'}
+  }];
+
+  console.log(categories)
+  categories.forEach(category => {
+    let box = largeCourseCard.querySelector('.grade-calc-box');
+    let el = gradeCategory(category.Type.value, category.Weight.value);
+    let weight = category.Weight.value;
+    
+    let [bg, color] = getBackgroundAndColorFromValue(weight);
+    el.style.background = bg
+    el.style.color = color
+
+    box.style.gridTemplateColumns += `auto`;
+    box.appendChild(el);
+  })
 
   largeCourseCard.dataset.name = courseName
 
@@ -436,13 +516,48 @@ const latestAssignmentsList = (rawAssignments) => {
       `
       });
 
+      const largeCard = Object.assign(document.createElement('div'), {
+        className: 'assignment',
+        innerHTML: `
+          <div class="as-info">
+              <div class="as-title">${a.Measure.value}</div>
+              <div class="as-due-date">${a.DueDate.value}</div>
+              <div class="as-category">${a.Type.value} (${a.essential.weight * 100}%)</div>
+          </div>
+  
+          <div class="score-box" ungraded=${a.ungraded}>
+              <div class="score-bar" style="width: ${scoreBarWidth}%"></div>
+              <div class="score">${a.essential.points}</div>
+              <div class="score-divide">/</div>
+              <div class="potential-score">${a.essential.pointsPossible}pts</div>
+          </div>
+          <div class="as-teacher">${a.teacher}</div>
+      `
+      });
+
+      if (a.essential.weight * 100 > 50) {
+        largeCard.classList.add('important')
+      } else {
+        largeCard.classList.add('regular')
+      }
+
+      if (!a.ungraded) {
+        let [bg, color, lighter, darker, border] = getBackgroundAndColorFromValue(a.essential.weight);
+        largeCard.querySelector('.score-bar').style.background = bg;
+        largeCard.querySelector('.score-box').style.color = color;
+        largeCard.querySelector('.score-box').style.background = lighter;
+  
+        if (border.suggested == true && scoreBarWidth != 100) {
+          largeCard.querySelector('.score-box').style.border = border.style;
+        }
+      }
+
+
       let courseName = a.essential.courseTitle;
       let largeCourseElement = document.querySelector(`.large-course-card[data-name="${courseName}"]`);
       let largeCourseAssignmentList = largeCourseElement.querySelector('.course-assignments');
-      let largeClone = card.cloneNode(true)
-
       
-      largeCourseAssignmentList.appendChild(largeClone)
+      largeCourseAssignmentList.appendChild(largeCard)
 
       if (a.ungraded == true) {
         continue;
