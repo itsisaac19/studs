@@ -392,11 +392,11 @@ section.why h2.listen {
 
 #dashboard .main-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 100px 1fr;
   grid-template-rows: 60px 1fr;
   grid-template-areas:
-    "top-bar"
-    "main-content";
+    "studs top-bar"
+    "main-content main-content";
 
   height: auto;
   min-height: 100vh;
@@ -405,19 +405,10 @@ section.why h2.listen {
   overflow: hidden;
 }
 
-.top-bar {
-  grid-area: top-bar;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: min-content auto;
 
-  border-bottom: 1px solid #EBEBEB;
-}
 
-.top-bar>div {
+.main-grid > div.studs {
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 400;
 
   display: grid;
   background: white;
@@ -425,15 +416,11 @@ section.why h2.listen {
   height: 100%;
   place-items: center;
 
-  color: #585858;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #EBEBEB;
-  box-shadow: inset 0px 2px 0px rgb(204, 204, 204);
+  border-bottom: 2px solid #EBEBEB;
+  box-sizing: border-box;
 
   transition: box-shadow 0.2s linear, color 0.2s linear, background 0.2s linear;
-}
 
-.top-bar>div.studs {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -442,31 +429,56 @@ section.why h2.listen {
   box-shadow: inset 0px 2px 0px rgb(204, 204, 204), inset -2px 0px 0px #EBEBEB;
 }
 
-.top-bar>div:not(.studs):not(.home) {
-  display: none;
-}
-
-.top-bar>div.active {
+.main-grid > div.studs.active {
   color: black;
   background: #f7f7f7;
   box-shadow: inset 0px 2px 0px rgb(75 75 75);
 }
 
-.top-bar>div:active {
+.main-grid > div.studs:active {
   background: #f7f7f7;
 }
 
-.top-bar>div:hover {
+.main-grid > div.studs:hover {
   color: #333;
   box-shadow: inset 0px 2px 0px rgb(75 75 75);
 }
 
+.top-bar-select-wrapper {
+  border-top: 2px solid rgb(204, 204, 204);
+  border-bottom: 2px solid #EBEBEB;
+
+  display: grid;
+}
+.top-bar {
+  font-family: inherit;
+  font-size: 16px;
+  color: inherit;
+
+  cursor: pointer;
+  border: none;
+
+  border-radius: 0px;
+
+  border-right: 16px solid transparent;
+
+  background: white;
+
+  text-indent: 10px;
+  padding: 0 0 0 0px;
+  margin: 0px 0 0 0;
+}
+
 .main-content {
   grid-area: main-content;
-  display: grid;
+  display: none;
 
   overflow-y: auto;
   height: min-content;
+}
+[view="dashboard"] .dashboard {
+  display: grid;
+
 }
 
 div.little-grid {
@@ -723,6 +735,9 @@ div.little-grid {
   background: rgb(228, 228, 228);
   border-radius: 7px;
 }
+.score-box[ungraded="true"] {
+  width: max-content;
+}
 .score-bar {
   position: absolute;
   top: 0;
@@ -745,6 +760,10 @@ div.little-grid {
 .potential-score {
   margin: auto 11px auto auto;
   font-size: 14px;
+}
+.score-box[ungraded="true"] .score-divide,
+.score-box[ungraded="true"] .potential-score {
+  display: none;
 }
 .as-teacher {
   margin: auto 0 auto auto;
@@ -769,4 +788,100 @@ div.little-grid {
   margin: 20px 0 20px auto;
   width: 100px;
  }
+}
+
+
+
+/* course-grades */
+.course-grades {
+  display: none;
+}
+[view="grades"] .course-grades {
+  display: grid;
+}
+
+.courses-slider-wrapper {
+  padding: 10px 0 15px 10px;
+  overflow-x: auto;
+}
+.courses-slider {
+  width: max-content;
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 8px;
+}
+.courses-slider .course-slider {
+  width: auto;
+}
+.course-slider {
+  cursor: pointer;
+  font-size: 14px;
+  padding: 10px 0px;
+  height: max-content;
+  display: grid;
+
+  outline: 1px solid rgba(228, 228, 228, 1);
+  transition: background 0.2s linear, outline 0.2s linear;
+}
+.course-slider.active, .course-slider:hover, .course-slider:focus {
+  outline: 1px solid black;
+}
+.course-slider:last-child {
+  margin-right: 10px;
+}
+.course-slider .course-name {
+  margin: auto;
+  padding: 0px 22px;
+
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.large-course-card {
+  display: none;
+  margin: 10px 0;
+}
+.large-course-card.active {
+  display: grid;
+}
+
+.large-course-card .course-info {
+  font-size: 30px;
+  width: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, max-content));
+  column-gap: 15px;
+  font-weight: 500;
+
+  margin: 0 15px;
+}
+.large-course-card .course-info .course-name {
+  color: #222;
+}
+.large-course-card .course-info .course-period {
+  color: #6f6f6f;
+}
+
+
+.large-course-card .grade {
+  margin: 7px 15px;
+  padding: 5px 10px;
+  width: max-content;
+
+  border-radius: 7px;
+
+  background: rgb(240, 240, 240);
+
+  font-weight: 500;
+  font-size: 30px;
+  color: #222;
+}
+.large-course-card .grade-raw {
+  color: #6f6f6f;
+}
+
+.large-course-card .course-assignments {
+  margin: 20px 0 0 0;
 }

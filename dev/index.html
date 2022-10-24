@@ -70,14 +70,20 @@
     </div>
 
     <div id="dashboard" class="hide">
-        <div class="main-grid">
-            <div class="top-bar">
-                <div class="studs">STUDS</div>
-                <div class="home active">HOME</div>
-                <div class="grades">GRADES</div>
-                <div class="messages">MESSAGES</div>
-                <div class="attendance">ATTENDANCE</div>
+        <div class="main-grid" view="dashboard">
+            <div class="studs">STUDS</div>
+            
+            <div class="top-bar-select-wrapper">
+                <select class="top-bar">
+                    <option value="dashboard">Home</option>
+                    <option value="grades">Grades</option>
+                    <!--
+                    <option class="messages">Messages</option>
+                    <option class="attendance">Attendance</option>
+                    -->
+                </select>
             </div>
+
 
             <div class="dashboard main-content">
                 <div class="little-grid">
@@ -108,17 +114,10 @@
                 </div>
             </div>
 
-            <div class="course-grades main-content">
-                <div class="large-course-card">
-                    <!--Populate info-->
+            <div class="course-grades main-content hide">
+                <div class="courses-slider-wrapper">
+                    <div class="courses-slider"></div>
                 </div>
-                <div class="large-course-card">
-                    <!--Populate info-->
-                </div>
-                <div class="large-course-card">
-                    <!--Populate info-->
-                </div>
-                <!--Etc..-->
             </div>
         </div>
     </div>

@@ -77,7 +77,7 @@ class Api {
             attrsAsObject: false,
             attrKey: '',
             textKey: 'value', 
-	          valueKey: 'value',
+            valueKey: 'value',
             childrenAsArray: false,
           });
 
@@ -128,8 +128,7 @@ const checkExistingUser = async () => {
       console.log('awaiting init')
       let g = await initDashboard(shouldStoreNewCacheTime); 
   
-      document.getElementById("app").classList.add("hide");
-      document.getElementById("dashboard").classList.remove("hide");
+
     })
   }
 }
@@ -143,8 +142,7 @@ const handleSignInResponse = (e, response) => {
   let password = document.getElementById("password");
 
   if (response["RT_ERROR"]["STACK_TRACE"].value.includes('login test is not a valid method')) {
-    document.getElementById("app").classList.add("hide");
-    document.getElementById("dashboard").classList.remove("hide");
+    e.target.innerHTML = 'loading data...'
     initDashboard();
 
     localStorage.setItem('lastCachedCredentials', JSON.stringify({
@@ -170,7 +168,7 @@ const signInHandler = async (e) => {
   let password = document.getElementById("password");
   if (email.value.length > 3 && password.value.length > 3) {
     e.target.classList.add("loading");
-    e.target.innerHTML = "loading...";
+    e.target.innerHTML = "logging in...";
 
     API.username = email.value;
     API.password = password.value;
@@ -240,6 +238,8 @@ const initDashboard = async (storeCachedTime=false) => {
 
     gradebook.Courses.Course.forEach(course => {
         addLittleCourseCard(course);
+        addLargeCourseCard(course);
+        addCourseSlider(course);
     });
 
     let initialDiff;
@@ -251,6 +251,8 @@ const initDashboard = async (storeCachedTime=false) => {
 
     cumulativeGradePointAverageGraph(gradebook.Courses.Course, initialDiff, 'day');
 
+    document.getElementById("app").classList.add("hide");
+    document.getElementById("dashboard").classList.remove("hide");
 
     return gradebook;
     //const [studentInfo, error1] = await API.call('StudentInfo');
@@ -262,9 +264,26 @@ const precision = (a) => {
   while (Math.round(a * e) / e !== a) e *= 10;
   return Math.log(e) / Math.LN10;
 }
+  
+const littleCourseCardHandler = (e) => {
+  console.log(e.currentTarget);
+
+  document.querySelector('.top-bar').value = 'grades';
+  document.querySelector('.top-bar').dispatchEvent(new Event('input', {bubbles:true}));
+
+  let selectedCourseId = e.currentTarget.dataset.name;
+  let selectedCourseButton = document.querySelector(`.course-slider[id="${selectedCourseId}"]`);
+  selectedCourseButton.dispatchEvent(new Event('click', {bubbles:true}));
+  
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
 
 const addLittleCourseCard = (course) => {
-    let courseName = course.Title.value.match(/^[^(]*/)[0].trim();
+    let courseName = course.Title.value;
+    let courseNameTrim = course.Title.value.match(/^[^(]*/)[0].trim();
     let coursePeriod = course.Period.value;
     let courseGrade = course.Marks.Mark.CalculatedScoreString.value;
     let courseGradeRaw = course.Marks.Mark.CalculatedScoreRaw.value;
@@ -278,7 +297,7 @@ const addLittleCourseCard = (course) => {
         className: 'little-course-card strip-button-styles',
         innerHTML: `
             <div class="course-info"> 
-              <div class="course-name">${courseName}</div>
+              <div class="course-name">${courseNameTrim}</div>
               <div class="course-period">Period ${coursePeriod}</div>
             </div>
             <div class="grade">
@@ -293,28 +312,82 @@ const addLittleCourseCard = (course) => {
         card.classList.add('NA')
     }
 
+    card.dataset.name = courseName;
+    card.onclick = littleCourseCardHandler;
+
     littleGrid.appendChild(card);
 }
 
-const populateCourseAssignments = (rawAssignments) => {
-  document.querySelector('large-course-card');
+const addLargeCourseCard = (course) => {
+  const parent = document.querySelector('.course-grades');
+  let courseName = course.Title.value;
+  let courseNameTrim = course.Title.value.match(/^[^(]*/)[0].trim();
+  let coursePeriod = course.Period.value;
+  let courseGrade = course.Marks.Mark.CalculatedScoreString.value;
+  let courseGradeRaw = course.Marks.Mark.CalculatedScoreRaw.value;
 
-  const card = Object.assign(document.createElement('div'), {
-    className: 'large',
+  if (precision(courseGradeRaw) == 0) {
+    courseGradeRaw = courseGradeRaw.toFixed(1);
+  }
+
+  const largeCourseCard = Object.assign(document.createElement('div'), {
+    className: 'large-course-card',
     innerHTML: `
         <div class="course-info"> 
-          <div class="course-name">${courseName}</div>
+          <div class="course-name">${courseNameTrim}</div>
           <div class="course-period">Period ${coursePeriod}</div>
         </div>
         <div class="grade">
             <span class="grade-value">${courseGrade}</span>
             <span class="grade-raw">${courseGradeRaw}</span>
         </div>
-    `,
-    tabIndex: 0
-  });
+        <div class="course-assignments"> 
 
-// etc...
+        </div>
+    `,
+  }); 
+
+  largeCourseCard.dataset.name = courseName
+
+  if (!parent.children[1]?.classList?.contains('large-course-card')) {
+    largeCourseCard.classList.add('active')
+  }
+
+  parent.appendChild(largeCourseCard);
+}
+
+const sliderHandler = (e) => {
+  e.currentTarget.parentElement.querySelector('.active').classList.remove('active');
+  e.currentTarget.classList.add('active');
+
+  let selectedCourseId = e.currentTarget.id;
+  let selectedCourse = document.querySelector(`.large-course-card[data-name="${selectedCourseId}"]`);
+  console.log(selectedCourse.parentElement)
+  let prev = selectedCourse.parentElement.querySelector('.large-course-card.active');
+  if (prev) prev.classList.remove('active');
+  selectedCourse.classList.add('active');
+}
+const addCourseSlider = (course) => {
+  const parent = document.querySelector('.courses-slider');
+  let courseName = course.Title.value;
+  let courseNameTrim = course.Title.value.match(/^[^(]*/)[0].trim();
+
+  const slider = Object.assign(document.createElement('button'), {
+    className: 'course-slider strip-button-styles',
+    innerHTML: `
+          <div class="course-name">${courseNameTrim}</div>
+    `,
+    id: courseName,
+    tabIndex: 0,
+  }); 
+
+  if (parent.style.gridTemplateColumns == '') slider.classList.add('active')
+
+  parent.style.gridTemplateColumns += ' max-content';
+
+  slider.onclick = sliderHandler;
+
+  parent.appendChild(slider);
 }
 
 const latestAssignmentsList = (rawAssignments) => {
@@ -322,11 +395,10 @@ const latestAssignmentsList = (rawAssignments) => {
   
   let count = 0;
 
-  console.log({rawAssignments})
+  console.log({rawAssignments});
+
 
   Object.keys(rawAssignments).sort().reverse().forEach(date => {
-    if (count > 6) return;
-
     let assignments = rawAssignments[date];
 
     console.log({
@@ -334,14 +406,16 @@ const latestAssignmentsList = (rawAssignments) => {
     })
 
     for (const a of assignments) {
-      if (count > 6) break;
-
       console.log({date, a, count})
 
       let scoreBarWidth = (a.essential.points / a.essential.pointsPossible).toFixed(2) * 100
 
-      if (a.essential.points == a.essential.pointsPossible) {
+      if (a.essential.points == a.essential.pointsPossible || a.essential.points > a.essential.pointsPossible) {
         scoreBarWidth = 100;
+      }
+
+      if (a.ungraded == true) {
+        a.essential.points = `${a.essential.points}pts possible`
       }
 
       const card = Object.assign(document.createElement('div'), {
@@ -352,7 +426,7 @@ const latestAssignmentsList = (rawAssignments) => {
               <div class="as-due-date">${a.DueDate.value}</div>
           </div>
   
-          <div class="score-box">
+          <div class="score-box" ungraded=${a.ungraded}>
               <div class="score-bar" style="width: ${scoreBarWidth}%"></div>
               <div class="score">${a.essential.points}</div>
               <div class="score-divide">/</div>
@@ -360,9 +434,22 @@ const latestAssignmentsList = (rawAssignments) => {
           </div>
           <div class="as-teacher">${a.teacher}</div>
       `
-      })
-  
-      latestGrid.appendChild(card);
+      });
+
+      let courseName = a.essential.courseTitle;
+      let largeCourseElement = document.querySelector(`.large-course-card[data-name="${courseName}"]`);
+      let largeCourseAssignmentList = largeCourseElement.querySelector('.course-assignments');
+      let largeClone = card.cloneNode(true)
+
+      
+      largeCourseAssignmentList.appendChild(largeClone)
+
+      if (a.ungraded == true) {
+        continue;
+      }
+      if (count < 7) {
+        latestGrid.appendChild(card);
+      } 
       count++
     }
   });
@@ -459,6 +546,8 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
   // {step} represents the size of which the graph increments 
   const allAssignments = {};
   const allAssignmentsRaw = {};
+  const masterAssignments = {};
+
   let buckets = [];
 
   // Buckets are calculated as a function of {step} in the duration from {start} to now
@@ -494,8 +583,6 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
     assignments.forEach(a => {
       let [score, SoutOf, scorePossible] = a.Score.value.split(/( out of )/);
       let [points, PoutOf, pointsPossible] = a.Points.value.split(/( \/ )/);
-      if (!scorePossible || !pointsPossible) return;
-      if (a.Notes.value?.includes('Not For Grading')) return;
 
       let type = a.Type;
       let weight;
@@ -523,6 +610,19 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
       raw.essential = essential;
       
       let endOfDueDate = dayjs(essential.dueDate, "M/D/YYYY").endOf('day').unix();
+
+      if (!scorePossible || !pointsPossible || a.Notes.value?.includes('Not For Grading')) {
+        raw.ungraded = true;
+        console.warn(raw)
+
+        if (allAssignmentsRaw[endOfDueDate]) {
+          allAssignmentsRaw[endOfDueDate].push(raw)
+        } else {
+          allAssignmentsRaw[endOfDueDate] = [raw];
+        }
+        
+        return;
+      };
 
       if (allAssignments[endOfDueDate]) {
         allAssignments[endOfDueDate].push(essential)
@@ -858,8 +958,11 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
 
 checkExistingUser();
 
-document.querySelector('.top-bar > .studs').addEventListener('click', () => {
+document.querySelector('.main-grid > .studs').addEventListener('click', () => {
   window.location.reload();
+});
+document.querySelector('.main-grid .top-bar').addEventListener('input', (e) => {
+  document.querySelector('.main-grid').setAttribute('view', e.currentTarget.value);
 });
 
 
@@ -905,5 +1008,5 @@ const updateGraphView = (graph, view, bucketsData) => {
   graph.options.scales['yAxis'].min = min;
 
   console.warn(graph.data)
-  graph.update();
+  graph.update('none');
 }
