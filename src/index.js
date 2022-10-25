@@ -254,6 +254,19 @@ const initDashboard = async (storeCachedTime=false) => {
     document.getElementById("app").classList.add("hide");
     document.getElementById("dashboard").classList.remove("hide");
 
+    let littleCourseCards = document.querySelectorAll('.little-course-card');
+    littleCourseCards.forEach((c, i) => {
+      setTimeout(() => {
+        c.classList.remove('hide');
+      }, (i * 100) + 100)
+    });
+
+    setTimeout(() => {
+      document.querySelector(".main-card").classList.remove("hide");
+      document.querySelector(".sub-card").classList.remove("hide");
+    }, 300)
+
+
     return gradebook;
     //const [studentInfo, error1] = await API.call('StudentInfo');
     //console.log(studentInfo);
@@ -301,7 +314,7 @@ const addLittleCourseCard = (course) => {
 
     const littleGrid = document.querySelector('.little-grid');
     const card = Object.assign(document.createElement('button'), {
-        className: 'little-course-card strip-button-styles',
+        className: 'little-course-card strip-button-styles hide',
         innerHTML: `
             <div class="course-info"> 
               <div class="course-name">${courseNameTrim}</div>

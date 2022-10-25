@@ -72,6 +72,7 @@ body {
   width: 100%;
 
   overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 #app {
@@ -106,8 +107,20 @@ div.main {
   letter-spacing: -2px;
 }
 
-h1 .slow {
+h1 .slow, .fancy {
   background: linear-gradient(90deg, rgb(20, 100, 69), rgb(192, 107, 107));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fancy2 {
+  background: linear-gradient(90deg, rgb(20, 81, 100), rgb(192, 188, 107));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fancy3 {
+  background: linear-gradient(90deg, rgb(100, 20, 95), rgb(192, 188, 107));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -250,6 +263,7 @@ h1 .slow {
 }
 .privacy-wrap .content {
   font-size: 14px;
+  line-height: 1.6em;
   color: #454545;
 }
 
@@ -286,7 +300,8 @@ section.why {
 
 section.why h2 {
   font-size: 1.8em;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -2px;
 
   text-align: left;
   margin: 45px auto;
@@ -318,6 +333,9 @@ section.why .explain {
 section.why h2.listen {
   margin: 100px auto 45px auto;
   text-align: left;
+
+  font-weight: 600;
+  letter-spacing: -2px;
 }
 
 .explain-3 {
@@ -352,12 +370,12 @@ section.why h2.listen {
 
   section.why h2.listen {
     margin: 20px 8vw 25px 8vw;
-    font-size: 1.4em;
+    font-size: 2em;
   }
 
   section.why h2 {
     margin: 5px 8vw 25px;
-    font-size: 1.4em;
+    font-size: 2em;
   }
 
   section.why p.explain,
@@ -535,11 +553,13 @@ div.little-grid {
   width: auto;
   display: grid;
 
+  opacity: 1;
+
   grid-template-rows: min-content 1fr;
 
   background: rgb(245, 245, 245);
   outline: 1px solid rgba(228, 228, 228, 1);
-  transition: background 0.2s linear, outline 0.2s linear;
+  transition: background 0.2s linear, outline 0.2s linear, opacity 0.8s ease;
 }
 
 .little-course-card:hover,
@@ -624,6 +644,8 @@ div.little-grid {
   height: 380px;
   width: calc(100% - 40px);
   max-width: 1920px;
+  opacity: 1;
+  transition: opacity 0.8s ease;
 
   display: grid;
   grid-template-rows: min-content 1fr;
@@ -693,6 +715,11 @@ div.little-grid {
   margin: 0px 20px;
   padding: 20px 20px 40px 20px;
   background: rgba(245, 245, 245, 0);
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+.little-course-card.hide, .main-card.hide, .sub-card.hide {
+  opacity: 0;
 }
 
 .latest-label {
