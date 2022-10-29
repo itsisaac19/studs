@@ -34,12 +34,54 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div id="app" class="">
-        <div class="studs">STUDS</div>
+    <div id="landing" class="">
+        <div class="studs">
+            <div class="image">
+                <img src="./side-logo.svg" alt="">
+            </div>
+            <div class="label">Studs</div>
+        </div>
+
+        <div role="main" class="landing">
+            <h1>
+                Fast, insightful, beautiful, and safe.
+                <span class="slow">The next-gen StudentVUE Client.</span>
+            </h1>
+            <p>Studs was built for students, by students. Elegantly designed from edge to edge, with practicality and efficiency as a central aspect.
+            </p>
+
+            <button class="try">Try it →</button>
+        </div>
+        <div class="tilt-mockup">
+            <img src="./midnight2.png" alt="">
+        </div>
+
+        <div class="tilt-mockup">
+            <img src="./midnight.png" alt="">
+        </div>
+        <div role="main" class="landing">
+            <h1>
+                Detailed breakdowns and 
+                <span class="slow">color-coding</span>
+            </h1>
+            <p>A HSL color-coding algorithm adapts to significant impacts in grade weighing and calculation. The heavier the weight, the darker the color. 
+            </p>
+            <div class="snippet">
+                <img src="./carbon-color.png" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div id="app" class="hide">
+        <div class="studs">
+            <div class="image">
+                <img src="./side-logo.svg" alt="">
+            </div>
+            <div class="label">Studs</div>
+        </div>
         <div role="main" class="main">
             <h1>
-                A fast, reliable, and beautiful client of<br>
-                <span class="slow">StudentVUE.</span>
+                Welcome to <span class="slow">Studs</span>. Login to get started.
             </h1>
             <span>An enhanced experience of
                 <a href="https://edupoint.com/Products/ParentVUE-StudentVUE" class="sv">
@@ -63,6 +105,7 @@
                 <br>
             </p>
         </div>
+
         <div class="about" role="button" tabindex="0">about</div>
 
         <section class="why">
@@ -148,6 +191,50 @@
                     <div class="courses-slider"></div>
                 </div>
             </div>
+
+            <div class="popper-cover hide noblock">
+                <div id="popper">
+                    <div class="assignment-pop">
+                        <div class="pop">
+                            <div class="pop-bar-wrapper">
+                                <div class="pop-bar"></div>
+                            </div>
+
+                            <div class="pop-content">
+                                <div class="details">
+                                    <div class="type">
+                                        <!-- <div class="label">Assignment Type</div> -->
+                                        <div class="value"></div>
+                                    </div>
+                                    <div class="title"></div>
+                                </div>
+        
+                                <div class="calcs">
+                                    <div class="points-box-wrapper"></div>
+                                    <div class="score-box-wrapper"></div>
+                                </div>
+            
+                                <div class="notes-wrapper">
+                                    <span class="notes-label">Teacher notes</span>
+                                    <div class="value"></div>
+                                </div>
+                                <div class="desc-wrapper">
+                                    <span class="desc-label">Description</span>
+                                    <div class="value"></div>
+                                </div>
+                            </div>
+
+                            <div class="pop-fade"></div>
+
+    
+                            <div class="exit">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMiAxMS4yOTNsMTAuMjkzLTEwLjI5My43MDcuNzA3LTEwLjI5MyAxMC4yOTMgMTAuMjkzIDEwLjI5My0uNzA3LjcwNy0xMC4yOTMtMTAuMjkzLTEwLjI5MyAxMC4yOTMtLjcwNy0uNzA3IDEwLjI5My0xMC4yOTMtMTAuMjkzLTEwLjI5My43MDctLjcwNyAxMC4yOTMgMTAuMjkzeiIvPjwvc3ZnPg==">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

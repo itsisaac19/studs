@@ -338,6 +338,7 @@ const addLittleCourseCard = (course) => {
     littleGrid.appendChild(card);
 }
 
+
 const getBackgroundAndColorFromValue = (decOrPercent) => {
   let reverse;
 
@@ -404,6 +405,10 @@ const addLargeCourseCard = (course) => {
             <div class="grade-calc-box">
 
             </div>
+            <div class="breakdown">
+              <div class="divisions"></div>
+              <div class="total"></div>
+            </div>
         </div>
         <div class="course-assignments"> 
 
@@ -426,7 +431,6 @@ const addLargeCourseCard = (course) => {
     Weight: {value: '100%'}
   }];
 
-  console.log(categories)
   categories.forEach(category => {
     let box = largeCourseCard.querySelector('.grade-calc-box');
     let el = gradeCategory(category.Type.value, category.Weight.value);
@@ -483,6 +487,280 @@ const addCourseSlider = (course) => {
   parent.appendChild(slider);
 }
 
+    /*!
+ * swiped-events.js - v@version@
+ * Pure JavaScript swipe events
+ * https://github.com/john-doherty/swiped-events
+ * @inspiration https://stackoverflow.com/questions/16348031/disable-scrolling-when-touch-moving-certain-element
+ * @author John Doherty <www.johndoherty.info>
+ * @license MIT
+ */
+    (function (window, document) {
+
+      'use strict';
+      
+      // patch CustomEvent to allow constructor creation (IE/Chrome)
+      if (typeof window.CustomEvent !== 'function') {
+      
+          window.CustomEvent = function (event, params) {
+      
+              params = params || { bubbles: false, cancelable: false, detail: undefined };
+      
+              var evt = document.createEvent('CustomEvent');
+              evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+              return evt;
+          };
+      
+          window.CustomEvent.prototype = window.Event.prototype;
+      }
+      
+      document.addEventListener('touchstart', handleTouchStart, false);
+      document.addEventListener('touchmove', handleTouchMove, false);
+      document.addEventListener('touchend', handleTouchEnd, false);
+      
+      var xDown = null;
+      var yDown = null;
+      var xDiff = null;
+      var yDiff = null;
+      var timeDown = null;
+      var startEl = null;
+      
+      /**
+       * Fires swiped event if swipe detected on touchend
+       * @param {object} e - browser event object
+       * @returns {void}
+       */
+      function handleTouchEnd(e) {
+      
+          // if the user released on a different target, cancel!
+          if (startEl !== e.target) return;
+      
+          var swipeThreshold = parseInt(getNearestAttribute(startEl, 'data-swipe-threshold', '20'), 10); // default 20px
+          var swipeTimeout = parseInt(getNearestAttribute(startEl, 'data-swipe-timeout', '500'), 10);    // default 500ms
+          var timeDiff = Date.now() - timeDown;
+          var eventType = '';
+          var changedTouches = e.changedTouches || e.touches || [];
+      
+          if (Math.abs(xDiff) > Math.abs(yDiff)) { // most significant
+              if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+                  if (xDiff > 0) {
+                      eventType = 'swiped-left';
+                  }
+                  else {
+                      eventType = 'swiped-right';
+                  }
+              }
+          }
+          else if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+              if (yDiff > 0) {
+                  eventType = 'swiped-up';
+              }
+              else {
+                  eventType = 'swiped-down';
+              }
+          }
+      
+          if (eventType !== '') {
+      
+              var eventData = {
+                  dir: eventType.replace(/swiped-/, ''),
+                  touchType: (changedTouches[0] || {}).touchType || 'direct',
+                  xStart: parseInt(xDown, 10),
+                  xEnd: parseInt((changedTouches[0] || {}).clientX || -1, 10),
+                  yStart: parseInt(yDown, 10),
+                  yEnd: parseInt((changedTouches[0] || {}).clientY || -1, 10)
+              };
+      
+              // fire `swiped` event event on the element that started the swipe
+              startEl.dispatchEvent(new CustomEvent('swiped', { bubbles: true, cancelable: true, detail: eventData }));
+      
+              // fire `swiped-dir` event on the element that started the swipe
+              startEl.dispatchEvent(new CustomEvent(eventType, { bubbles: true, cancelable: true, detail: eventData }));
+          }
+      
+          // reset values
+          xDown = null;
+          yDown = null;
+          timeDown = null;
+      }
+      
+      /**
+       * Records current location on touchstart event
+       * @param {object} e - browser event object
+       * @returns {void}
+       */
+      function handleTouchStart(e) {
+      
+          // if the element has data-swipe-ignore="true" we stop listening for swipe events
+          if (e.target.getAttribute('data-swipe-ignore') === 'true') return;
+      
+          startEl = e.target;
+      
+          timeDown = Date.now();
+          xDown = e.touches[0].clientX;
+          yDown = e.touches[0].clientY;
+          xDiff = 0;
+          yDiff = 0;
+      }
+      
+      /**
+       * Records location diff in px on touchmove event
+       * @param {object} e - browser event object
+       * @returns {void}
+       */
+      function handleTouchMove(e) {
+      
+          if (!xDown || !yDown) return;
+      
+          var xUp = e.touches[0].clientX;
+          var yUp = e.touches[0].clientY;
+      
+          xDiff = xDown - xUp;
+          yDiff = yDown - yUp;
+      }
+      
+      /**
+       * Gets attribute off HTML element or nearest parent
+       * @param {object} el - HTML element to retrieve attribute from
+       * @param {string} attributeName - name of the attribute
+       * @param {any} defaultValue - default value to return if no match found
+       * @returns {any} attribute value or defaultValue
+       */
+      function getNearestAttribute(el, attributeName, defaultValue) {
+      
+          // walk up the dom tree looking for attributeName
+          while (el && el !== document.documentElement) {
+      
+              var attributeValue = el.getAttribute(attributeName);
+      
+              if (attributeValue) {
+                  return attributeValue;
+              }
+      
+              el = el.parentNode;
+          }
+      
+          return defaultValue;
+      }
+      
+      }(window, document));
+
+const populatePopup = (a, srcElement) => {
+  let popup = document.querySelector('.popper-cover');
+  popup.querySelector('.title').innerHTML = a.Measure.value;
+  popup.querySelector('.type .value').innerHTML = a.Type.value;
+  let [bg, color] = getBackgroundAndColorFromValue(a.essential.weight)
+  popup.querySelector('.type .value').style.background = bg
+  popup.querySelector('.type .value').style.color = color
+
+
+  popup.querySelector('.calcs > .points-box-wrapper').innerHTML = srcElement.querySelector('.score-box').outerHTML;
+
+  let scoreBarWidth = (a.essential.score / a.essential.scorePossible).toFixed(2) * 100
+  let calculatedScoreBox = `
+  <div class="score-box">
+    <div class="score-bar" style="width: ${scoreBarWidth}%"></div>
+    <div class="score">${a.essential.score}</div>
+    <div class="score-divide">/</div>
+    <div class="potential-score">${a.essential.scorePossible}</div>
+  </div>
+  `
+
+  if (!a.ungraded) {
+    popup.querySelector('.calcs > .score-box-wrapper').innerHTML = calculatedScoreBox;
+  }
+
+  let notes = a.Notes.value
+  let desc = a.MeasureDescription.value
+
+  if (notes) {
+    popup.querySelector('.notes-wrapper .value').innerHTML = notes;
+    popup.querySelector('.notes-wrapper .value').classList.add('present')
+  }
+  if (desc) {
+    popup.querySelector('.desc-wrapper .value').innerHTML = desc;
+    popup.querySelector('.desc-wrapper .value').classList.add('present')
+  }
+}
+
+function preventDefault(e) {
+  e.preventDefault();
+}
+
+// modern Chrome requires { passive: false } when adding event
+var supportsPassive = false;
+try {
+  window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+    get: function () { supportsPassive = true; } 
+  }));
+} catch(e) {}
+
+var wheelOpt = supportsPassive ? { passive: false } : false;
+var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+const disableScroll = (el) => {
+  el.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+  el.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+  el.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
+}
+const enableScroll = (el) => {
+  el.removeEventListener('DOMMouseScroll', preventDefault, false);
+  el.removeEventListener(wheelEvent, preventDefault, wheelOpt); 
+  el.removeEventListener('touchmove', preventDefault, wheelOpt); 
+}
+
+const assignmentHandler = (aData, ev) => {
+  populatePopup(aData, ev.currentTarget);
+  let popup = document.querySelector('.popper-cover');
+  
+  disableScroll(document.body);
+
+  document.body.classList.add('noscroll')
+
+  popup.classList.remove('noblock');
+  setTimeout(() => {
+    popup.classList.remove('hide')
+  })
+}
+const exitPopup = (e) => {
+  document.body.classList.remove('noscroll');
+  enableScroll(document.body)
+
+  
+  document.querySelector('#popper').classList.remove('full-view');
+
+  let popup = document.querySelector('.popper-cover');
+  
+  popup.querySelector('.notes-wrapper .value').classList.remove('present')
+  popup.querySelector('.desc-wrapper .value').classList.remove('present')
+
+  popup.classList.add('hide');
+  setTimeout(() => {
+    popup.classList.add('noblock')
+  }, 501)
+}
+document.querySelector('#popper .exit').onclick = exitPopup;
+
+document.querySelector('.popper-cover').onclick = (e) => {
+  if (e.target == e.currentTarget && !e.target.classList.contains('hide')) {
+    exitPopup();
+  }
+};
+
+
+document.querySelector('#popper').addEventListener('swiped-up', function(e) {
+  let parent = document.querySelector('#popper');
+  if (!parent.classList.contains('full-view')) {
+    disableScroll(document.body);
+    parent.classList.add('full-view')
+    parent.querySelector('.pop-content').scrollTop = 0;
+  }
+});
+document.querySelector('.popper-cover').addEventListener('swiped-down', function(e) {
+  exitPopup()
+});
+
+
 const latestAssignmentsList = (rawAssignments) => {
   const latestGrid = document.querySelector('.latest-grid');
   
@@ -494,12 +772,8 @@ const latestAssignmentsList = (rawAssignments) => {
   Object.keys(rawAssignments).sort().reverse().forEach(date => {
     let assignments = rawAssignments[date];
 
-    console.log({
-      assignments
-    })
-
     for (const a of assignments) {
-      console.log({date, a, count})
+      //console.log({date, a, count})
 
       let scoreBarWidth = (a.essential.points / a.essential.pointsPossible).toFixed(2) * 100
 
@@ -571,6 +845,9 @@ const latestAssignmentsList = (rawAssignments) => {
       let largeCourseAssignmentList = largeCourseElement.querySelector('.course-assignments');
       
       largeCourseAssignmentList.appendChild(largeCard)
+      largeCard.addEventListener('click', (e) => {
+        assignmentHandler(a, e)
+      })
 
       if (a.ungraded == true) {
         continue;
@@ -785,13 +1062,15 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
         return;
       } 
 
+
+
       console.log(dayjs(date, 'X').format('MMMD'), `${points} / ${a.pointsPossible}`)
       if (courseCumulativeGPAs[a.courseTitle]) {
 
         if (courseCumulativeGPAs[a.courseTitle][date]) {
           if (courseCumulativeGPAs[a.courseTitle][date][a.weight]) {
             courseCumulativeGPAs[a.courseTitle][date][a.weight].points += points;
-            courseCumulativeGPAs[a.courseTitle][date][a.weight].maxPoints += points;
+            courseCumulativeGPAs[a.courseTitle][date][a.weight].maxPoints += a.pointsPossible;
           } else {
             courseCumulativeGPAs[a.courseTitle][date][a.weight] = {
                 points: points,
@@ -822,6 +1101,8 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
   })
 
   console.groupEnd()
+
+
 
   // LAST LOOP!! :)
   console.groupCollapsed('calculating tGPAs...')
@@ -881,16 +1162,17 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
 
         let savedWeightsLength = Object.keys(courseCumulativeGPAs[courseName].prevTotal).length
         if (savedWeightsLength > 1) {
-            if (categories.length != savedWeightsLength) {
+            if (Object.keys(categories).length != savedWeightsLength) {
+              console.warn(Object.keys(categories).length, savedWeightsLength)
                 let prevTotals = structuredClone(courseCumulativeGPAs[courseName].prevTotal);
                 delete prevTotals[weight];
                 let missingWeight = Object.keys(prevTotals)[0];
                 console.warn('missing weight:', Object.keys(prevTotals)[0]);
+
                 categories[missingWeight] = {
-                    points: prevTotals[missingWeight].pointsTotal,
-                    maxPoints: prevTotals[missingWeight].maxPointsTotal
+                  points: prevTotals[missingWeight].pointsTotal,
+                  maxPoints: prevTotals[missingWeight].maxPointsTotal
                 }
-                console.log(categories)
             }
         }
 
@@ -1081,16 +1363,144 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
   
 
   latestAssignmentsList(allAssignmentsRaw);
+  populatePointStatistics(courseCumulativeGPAs)
+}
+
+const gradeCalcBoxHandler = (e) => {
+  if (e.currentTarget.classList.contains('expand')) {
+    e.currentTarget.classList.remove('expand');
+  } else {
+    e.currentTarget.classList.add('expand');
+  }
+}
+
+const populatePointStatistics = (cGPAs) => {
+  Object.keys(courseCumulativeGPAs).forEach(courseName => {
+    let dates = courseCumulativeGPAs[courseName];
+    let dateKeys = Object.keys(dates).sort();
+    let lastDateKey = dateKeys[dateKeys.length - 3];
+    
+    console.log(dates)
+
+    let selectedCourse = document.querySelector(`.large-course-card[data-name="${courseName}"]`);
+    let gradeCalcBox = selectedCourse.querySelector('.grade-calc');
+
+    let breakDown = gradeCalcBox.querySelector('.breakdown');
+    let categories = gradeCalcBox.querySelectorAll('.grade-calc-category');
+    let categoriesGrid = gradeCalcBox.querySelector('.grade-calc-box');
+
+    let divisionsElement = breakDown.children[0];
+
+    let totalElement = breakDown.children[1];
+    let total = 0;
+    let current = 0;
+
+    const divisionCard = (weight) => Object.assign(document.createElement('div'), {
+      className: 'division',
+      innerHTML: `
+        <div class="value">${weight.pointsTotal} / ${weight.maxPointsTotal}pts</div>
+      `,
+    }); 
+
+    Object.keys(dates.prevTotal).forEach((weight, index) => {
+      total += dates.prevTotal[weight].maxPointsTotal;
+      current += dates.prevTotal[weight].pointsTotal;
+
+      if (precision(dates.prevTotal[weight].pointsTotal) > 3) {
+        dates.prevTotal[weight].pointsTotal = dates.prevTotal[weight].pointsTotal.toFixed(0)
+      }
+
+      divisionsElement.appendChild(divisionCard(dates.prevTotal[weight]))
+    });
+
+    let diffCategory = categories.length - Object.keys(dates.prevTotal).length;
+    if (diffCategory > 0) {
+      for (let i = 0; i < diffCategory; i++) {
+        divisionsElement.appendChild(divisionCard({
+          pointsTotal: 0,
+          maxPointsTotal: 0
+        }))
+      }
+    };
+
+
+    categories.forEach((c, i) => {
+      divisionsElement.children[i].style.background = c.style.background;
+      divisionsElement.children[i].style.color = c.style.color;
+    })
+
+    if (precision(current) > 3) {
+      current = current.toFixed(0)
+    }
+    totalElement.innerHTML = `<div class="total-value">${current} / ${total}pts</div>`
+  });
 }
 
 
 checkExistingUser();
 
-document.querySelector('.main-grid > .studs').addEventListener('click', () => {
-  window.location.reload();
+document.querySelector('#app > .studs').addEventListener('click', () => {
+  let searchParams = new URLSearchParams(window.location.search);
+  searchParams.delete('skipLanding')
+
+  window.location.search = searchParams.toString();
+  return
 });
+
+document.querySelector('.main-grid > .studs').addEventListener('click', () => {
+  let searchParams = new URLSearchParams(window.location.search);
+  searchParams.set('skipLanding', 'true')
+
+  window.location.search = searchParams.toString();
+  return
+});
+document.querySelector('button.try').addEventListener('click', (e) => {
+  document.getElementById('landing').classList.add('hide')
+  document.getElementById('app').classList.remove('hide')
+})
+
+const parseSearchParams = () => {
+  let searchParams = new URLSearchParams(window.location.search);
+
+  if (searchParams.get('skipLanding')) {
+    if (searchParams.get('skipLanding') == 'true') {
+      document.getElementById('landing').classList.add('hide')
+      document.getElementById('app').classList.remove('hide')
+    }
+  }
+}
+parseSearchParams();
+
 document.querySelector('.main-grid .top-bar').addEventListener('input', (e) => {
   document.querySelector('.main-grid').setAttribute('view', e.currentTarget.value);
+
+  /* if (e.currentTarget.value == 'grades') {
+    let gradeCalcs = document.querySelectorAll('.grade-calc');
+    gradeCalcs.forEach(gc => {
+      let categories = gc.querySelectorAll('.grade-calc-category');
+      let divisons = gc.querySelectorAll('.division');
+
+      if (categories.length == divisons.length) {
+        let gcBox = gc.querySelector('.grade-calc-box');
+        let divisonBox = gc.querySelector('.divisions');
+        
+        let columnsText = window.getComputedStyle(gcBox).getPropertyValue('grid-template-columns');
+        
+        let groups = columnsText.split('px');
+        let frString = '';
+        groups.forEach(column => {
+          if (column.length > 0) {
+            let fr = ((parseFloat(column) / gcBox.offsetWidth) * 10).toFixed(2) + 'fr';
+            console.log(fr);
+            frString += `${fr} `;
+          }
+        })
+
+        divisonBox.style.gridTemplateColumns = frString;
+
+      }
+    })
+  } */
 });
 
 
