@@ -1,4 +1,11 @@
-/*
+import Head from 'next/head';
+import { useEffect } from 'react';
+
+export default function Home() {
+
+  useEffect(() => {
+
+    /*
 
 const getDistrictUrls = async (zip) => {
   const districtUrls = await StudentVue.findDistricts(zip);
@@ -101,6 +108,21 @@ const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(isSameOrBefore);
 dayjs.extend(customParseFormat);
 
+
+const populateSignInAsButton = (username, shouldStoreNewCacheTime) => {
+  const signInAsButton = document.getElementById('signInAs');
+
+  signInAsButton.classList.remove('hide');
+  signInAsButton.innerHTML = `Sign in as ${username}`;
+
+  signInAsButton.addEventListener('click', async (e) => {
+    signInAsButton.classList.add('loading')
+    signInAsButton.innerHTML = 'loading...'
+    console.log('awaiting init via signInAsButton')
+    let g = await initDashboard(shouldStoreNewCacheTime); 
+  })
+}
+
 const checkExistingUser = async () => {
   let LCC = localStorage.getItem('lastCachedCredentials') ? JSON.parse(localStorage.getItem('lastCachedCredentials')) : null;
   let hoursSinceLastCache = dayjs().diff(dayjs(localStorage.getItem('last'), 'X'), 'hour');
@@ -119,17 +141,7 @@ const checkExistingUser = async () => {
     } 
     console.log({minutesSinceLastCache})
 
-    document.getElementById('signInAs').classList.remove('hide');
-    document.getElementById('signInAs').innerHTML = `Sign in as ${API.username}`
-
-    document.getElementById('signInAs').addEventListener('click', async (e) => {
-      e.currentTarget.classList.add('loading')
-      e.currentTarget.innerHTML = 'loading...'
-      console.log('awaiting init')
-      let g = await initDashboard(shouldStoreNewCacheTime); 
-  
-
-    })
+    populateSignInAsButton(API.username, shouldStoreNewCacheTime)
   }
 }
 
@@ -138,8 +150,8 @@ const login = async () => {
 };
 
 const handleSignInResponse = (e, response) => {
-  let email = document.getElementById("email");
-  let password = document.getElementById("password");
+  let email = document.getElementById('email');
+  let password = document.getElementById('password');
 
   if (response["RT_ERROR"]["STACK_TRACE"].value.includes('login test is not a valid method')) {
     e.target.innerHTML = 'loading data...'
@@ -226,7 +238,6 @@ const initDashboard = async (storeCachedTime=false) => {
     let gradebook;
     let [cachedResponse, dateOfCachedResponse] = API.checkCache('Gradebook');
     if (cachedResponse) {
-      console.log('cached gradebook response:', cachedResponse);
       gradebook = cachedResponse;
     } else {
       const [gradebookResponse, error2] = await API.call('Gradebook');
@@ -234,12 +245,12 @@ const initDashboard = async (storeCachedTime=false) => {
       API.cacheResponse('Gradebook', gradebook, storeCachedTime);
     }
 
-    console.log(gradebook);
+    console.log({gradebook});
 
     gradebook.Courses.Course.forEach(course => {
-        addLittleCourseCard(course);
-        addLargeCourseCard(course);
-        addCourseSlider(course);
+      addLittleCourseCard(course);
+      addLargeCourseCard(course);
+      addCourseSlider(course);
     });
 
     let initialDiff;
@@ -258,7 +269,7 @@ const initDashboard = async (storeCachedTime=false) => {
     littleCourseCards.forEach((c, i) => {
       setTimeout(() => {
         c.classList.remove('hide');
-      }, (i * 100) + 100)
+      }, (i * 100) + 50)
     });
 
     setTimeout(() => {
@@ -431,6 +442,9 @@ const addLargeCourseCard = (course) => {
     Weight: {value: '100%'}
   }];
 
+  
+  let gridTemplateColumnsString = ``;
+  
   categories.forEach(category => {
     let box = largeCourseCard.querySelector('.grade-calc-box');
     let el = gradeCategory(category.Type.value, category.Weight.value);
@@ -440,9 +454,16 @@ const addLargeCourseCard = (course) => {
     el.style.background = bg
     el.style.color = color
 
-    box.style.gridTemplateColumns += `auto`;
+    console.log({category})
+    let weightDecimal = parseFloat(category.Weight.value) / 100.0; 
+
+    //gridTemplateColumnsString += `${weightDecimal}fr `
+    gridTemplateColumnsString += `1fr `;
     box.appendChild(el);
   })
+
+  let box = largeCourseCard.querySelector('.grade-calc-box');
+  box.style.gridTemplateColumns = gridTemplateColumnsString.trim();
 
   largeCourseCard.dataset.name = courseName
 
@@ -786,7 +807,7 @@ const latestAssignmentsList = (rawAssignments) => {
       }
 
       const card = Object.assign(document.createElement('div'), {
-        className: 'latest-assignment',
+        className: 'assignment',
         innerHTML: `
           <div class="as-info">
               <div class="as-title">${a.Measure.value}</div>
@@ -803,7 +824,7 @@ const latestAssignmentsList = (rawAssignments) => {
       `
       });
 
-      const largeCard = Object.assign(document.createElement('div'), {
+      /* const card = Object.assign(document.createElement('div'), {
         className: 'assignment',
         innerHTML: `
           <div class="as-info">
@@ -820,22 +841,22 @@ const latestAssignmentsList = (rawAssignments) => {
           </div>
           <div class="as-teacher">${a.teacher}</div>
       `
-      });
+      }); */
 
       if (a.essential.weight * 100 > 50) {
-        largeCard.classList.add('important')
+        card.classList.add('important')
       } else {
-        largeCard.classList.add('regular')
+        card.classList.add('regular')
       }
 
       if (!a.ungraded) {
         let [bg, color, lighter, darker, border] = getBackgroundAndColorFromValue(a.essential.weight);
-        largeCard.querySelector('.score-bar').style.background = bg;
-        largeCard.querySelector('.score-box').style.color = color;
-        largeCard.querySelector('.score-box').style.background = lighter;
+        card.querySelector('.score-bar').style.background = bg;
+        card.querySelector('.score-box').style.color = color;
+        card.querySelector('.score-box').style.background = lighter;
   
         if (border.suggested == true && scoreBarWidth != 100) {
-          largeCard.querySelector('.score-box').style.border = border.style;
+          card.querySelector('.score-box').style.border = border.style;
         }
       }
 
@@ -844,8 +865,8 @@ const latestAssignmentsList = (rawAssignments) => {
       let largeCourseElement = document.querySelector(`.large-course-card[data-name="${courseName}"]`);
       let largeCourseAssignmentList = largeCourseElement.querySelector('.course-assignments');
       
-      largeCourseAssignmentList.appendChild(largeCard)
-      largeCard.addEventListener('click', (e) => {
+      largeCourseAssignmentList.appendChild(card)
+      card.addEventListener('click', (e) => {
         assignmentHandler(a, e)
       })
 
@@ -1302,7 +1323,7 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
   let gpaSpan = document.querySelector('.gpa-value');
   gpaSpan.innerHTML = buckets[buckets.length - 1].ctGPA;
 
-  const min = Math.min(...buckets.map(x => x.ctGPA)) - 1;
+  let min = Math.min(...buckets.map(x => x.ctGPA)) - 1;
   if (min < 0) min = 0;
 
   const graphData = buckets.map(x => x.ctGPA);
@@ -1402,6 +1423,9 @@ const populatePointStatistics = (cGPAs) => {
       `,
     }); 
 
+    let gridTemplateColumnsString = ``;
+    let currentDecimalTotal = 0;
+
     Object.keys(dates.prevTotal).forEach((weight, index) => {
       total += dates.prevTotal[weight].maxPointsTotal;
       current += dates.prevTotal[weight].pointsTotal;
@@ -1411,7 +1435,22 @@ const populatePointStatistics = (cGPAs) => {
       }
 
       divisionsElement.appendChild(divisionCard(dates.prevTotal[weight]))
+      //gridTemplateColumnsString += `${weight}fr `;
+      gridTemplateColumnsString += `1fr `;
+      
+      currentDecimalTotal += parseFloat(weight);
+
+      if (index == Object.keys(dates.prevTotal).length - 1) {
+          if (currentDecimalTotal < 1) {
+            let missing = 1 - currentDecimalTotal;
+            //gridTemplateColumnsString += `${missing}fr `;
+            gridTemplateColumnsString += `1fr `;
+          }
+      }
     });
+
+    console.log({gridTemplateColumnsString});
+    divisionsElement.style.gridTemplateColumns = gridTemplateColumnsString.trim();
 
     let diffCategory = categories.length - Object.keys(dates.prevTotal).length;
     if (diffCategory > 0) {
@@ -1541,10 +1580,222 @@ const updateGraphView = (graph, view, bucketsData) => {
     return `${x.readableDate.slice(0, 3)} ${x.readableDate.slice(3)}`
   });
 
-  const min = Math.min(...buckets.map(x => x.ctGPA)) - 1;
+  let min = Math.min(...buckets.map(x => x.ctGPA)) - 1;
   if (min < 0) min = 0;
   graph.options.scales['yAxis'].min = min;
 
   console.warn(graph.data)
   graph.update('none');
+}
+
+  })
+
+  return (
+    <div>
+      <Head>
+        <meta charSet="UTF-8" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="A blazing fast StudentVUE client." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' id='b' viewBox='0 0 97.605 131.739'%3E%3Cg id='c'%3E%3Cg%3E%3Cpolyline points='3 17.348 3 65.87 3 114.391' style='fill:none; stroke:%23000; stroke-miterlimit:10; stroke-width:6px;'/%3E%3Cpolyline points='3 90.13 73.668 90.13 73.668 65.87 23.937 65.87 23.937 41.609 94.605 41.609' style='fill:none; stroke:%23000; stroke-miterlimit:10; stroke-width:6px;'/%3E%3Cpolyline points='94.605 17.348 94.605 65.87 94.605 114.391' style='fill:none; stroke:%23000; stroke-miterlimit:10; stroke-width:6px;'/%3E%3Crect x='3' y='114.391' width='91.605' height='14.348' style='stroke:%23000; stroke-miterlimit:10; stroke-width:6px;'/%3E%3Crect x='3' y='3' width='91.605' height='14.348' style='stroke:%23000; stroke-miterlimit:10; stroke-width:6px;'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E" />
+        {/* Primary Meta Tags */}
+        <title>A fast, reliable, and beautiful client of StudentVUE.</title>
+        <meta name="title" content="A fast, reliable, and beautiful client of StudentVUE." />
+        <meta name="description" content="Studs - reimagine your StudentVUE experience." />
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://studsvue.netlify.app/" />
+        <meta property="og:title" content="A fast, reliable, and beautiful client of StudentVUE." />
+        <meta property="og:description" content="Studs - reimagine your StudentVUE experience." />
+        <meta property="og:image" content="https://studsvue.netlify.app/metaimage.png" />
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://studsvue.netlify.app/" />
+        <meta property="twitter:title" content="A fast, reliable, and beautiful client of StudentVUE." />
+        <meta property="twitter:description" content="Studs - reimagine your StudentVUE experience." />
+        <meta property="twitter:image" content="https://studsvue.netlify.app/metaimage.png" />
+      </Head>
+        <div id="landing" className="">
+          <div className="studs">
+            <div className="image">
+              <img src="./side-logo.svg" alt="" />
+            </div>
+            <div className="label">Studs</div>
+          </div>
+          <div role="main" className="landing">
+            <h1>
+              Fast, insightful, beautiful, and safe.
+              <span className="slow">The next-gen StudentVUE Client.</span>
+            </h1>
+            <p>Studs was built for students, by students. Elegantly designed from edge to edge, with practicality and efficiency as a central aspect.
+            </p>
+            <button className="try">Try it →</button>
+          </div>
+          <div className="tilt-mockup">
+            <img src="./midnight2.png" alt="" />
+          </div>
+          <div className="tilt-mockup">
+            <img src="./midnight.png" alt="" />
+          </div>
+          <div role="main" className="landing">
+            <h1>
+              Detailed breakdowns and 
+              <span className="slow">color-coding</span>
+            </h1>
+            <p>A HSL color-coding algorithm adapts to significant impacts in grade weighing and calculation. The heavier the weight, the darker the color. 
+            </p>
+            <div className="snippet">
+              <img src="./carbon-color.png" alt="" />
+            </div>
+          </div>
+        </div>
+        <div id="app" className="hide">
+          <div className="studs">
+            <div className="image">
+              <img src="./side-logo.svg" alt="" />
+            </div>
+            <div className="label">Studs</div>
+          </div>
+          <div role="main" className="main">
+            <h1>
+              Welcome to <span className="slow">Studs</span>. Login to get started.
+            </h1>
+            <span>An enhanced experience of
+              <a href="https://edupoint.com/Products/ParentVUE-StudentVUE" className="sv">
+                StudentVUE </a>&nbsp;&nbsp;&nbsp; for
+              <a href="https://www.moundsviewschools.org/moundsview">Mounds View High School</a>
+              students.
+            </span>
+          </div>
+          <div className="auth-form">
+            <button id="signInAs" className="hide">Sign in as</button>
+            <input aria-label="email" type="email" name="" id="email" placeholder="StudentVUE Email" />
+            <input aria-label="password" type="password" name="" id="password" placeholder="StudentVUE Password" />
+            <button id="login" className="">Sign in</button>
+          </div>
+          <div className="privacy-wrap">
+            <p className="question">This website is safe to use</p>
+            <p className="content">
+              This website is open sourced <a href="https://github.com/itsisaac19/studs">on Github</a>.
+              Your login info and StudentVUE data is <u><b>never</b></u> shared, saved, or sold. Period.
+              <br />
+            </p>
+          </div>
+          <div className="about" role="button" tabIndex={0}>about</div>
+          <section className="why">
+            <h2>The big question — how does it <span className="fancy">work</span>?</h2>
+            <p className="explain">
+              StudentVUE has created a database which developers are granted access to through an API (application programming interface). 
+              <br /><br /> We can then take a user's login credentials, send them to StudentVUE, and if they match the credentials that they have stored, it grants the developer access to 
+              the user's data. <br /> <br /> <b>At no point during this process are the user credentials exposed to the developer for extraction or exploitation.</b>
+            </p>
+            <h2 className="listen">Ok, but <span className="fancy2">why</span>?</h2>
+            <p className="explain-3">
+              We're tired of the laggy website and slow loading times. The buggy
+              app that seems to break every once-in-a-while. We want a reliable, fast,
+              and practical interface.
+            </p>
+            <p className="explain-2">
+              With STUDS, reimagine your StudentVUE experience.
+            </p>
+            <ul className="e-list">
+              <li>You <i>understand</i> what you're looking at.</li>
+              <li>It doesn't take decades for you to navigate between courses.</li>
+              <li>Better statistics</li>
+            </ul>
+            <h2 className="listen">We're <span className="fancy3">listening</span> to the parents and students</h2>
+            <p className="explain-3 last">
+              We're responding to the endless complaints. And that's not an
+              exaggeration — there's currently over 10,000 one-star reviews on the
+              app store.
+            </p>
+          </section>
+        </div>
+        <div id="dashboard" className="hide">
+          <div className="main-grid" view="dashboard">
+            <div className="studs">STUDS</div>
+            <div className="top-bar-select-wrapper">
+              <select className="top-bar">
+                <option value="dashboard">Home</option>
+                <option value="grades">Grades</option>
+                {/*
+                    <option class="messages">Messages</option>
+                    <option class="attendance">Attendance</option>
+                    */}
+              </select>
+            </div>
+            <div className="dashboard main-content">
+              <div className="little-grid">
+              </div>
+              <div className="main-card hide">
+                <div className="gpa-header">
+                  <div className="title">
+                    CUMULATIVE GPA <span className="gpa-value" />
+                  </div>
+                  <div className="c-gpa-view-input">
+                    <select name="" id="gpa-view">
+                      <option value="all-time">All time</option>
+                      <option value="six-month">6 Months</option>
+                      <option value="month">Month</option>
+                      <option value="week">Week</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="graph-wrap">
+                  <canvas id="gpa-graph" style={{maxWidth: '100%'}} />
+                </div>
+              </div>
+              <div className="sub-card hide">
+                <div className="latest-label">Latest Graded Assignments</div>
+                <div className="latest-grid">
+                </div>
+              </div>
+            </div>
+            <div className="course-grades main-content hide">
+              <div className="courses-slider-wrapper">
+                <div className="courses-slider" />
+              </div>
+            </div>
+            <div className="popper-cover hide noblock">
+              <div id="popper">
+                <div className="assignment-pop">
+                  <div className="pop">
+                    <div className="pop-bar-wrapper">
+                      <div className="pop-bar" />
+                    </div>
+                    <div className="pop-content">
+                      <div className="details">
+                        <div className="type">
+                          {/* <div class="label">Assignment Type</div> */}
+                          <div className="value" />
+                        </div>
+                        <div className="title" />
+                      </div>
+                      <div className="calcs">
+                        <div className="points-box-wrapper" />
+                        <div className="score-box-wrapper" />
+                      </div>
+                      <div className="notes-wrapper">
+                        <span className="notes-label">Teacher notes</span>
+                        <div className="value" />
+                      </div>
+                      <div className="desc-wrapper">
+                        <span className="desc-label">Description</span>
+                        <div className="value" />
+                      </div>
+                    </div>
+                    <div className="pop-fade" />
+                    <div className="exit">
+                      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMiAxMS4yOTNsMTAuMjkzLTEwLjI5My43MDcuNzA3LTEwLjI5MyAxMC4yOTMgMTAuMjkzIDEwLjI5My0uNzA3LjcwNy0xMC4yOTMtMTAuMjkzLTEwLjI5MyAxMC4yOTMtLjcwNy0uNzA3IDEwLjI5My0xMC4yOTMtMTAuMjkzLTEwLjI5My43MDctLjcwNyAxMC4yOTMgMTAuMjkzeiIvPjwvc3ZnPg==" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  )
 }

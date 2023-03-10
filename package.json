@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=development --watch",
-    "produce": "webpack --config prod.config.js"
+    "dev": "next dev",
+    "build": "next build && next export",
+    "start": "next start"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +23,9 @@
   },
   "dependencies": {
     "chart.js": "^3.9.1",
-    "dayjs": "^1.11.5"
+    "dayjs": "^1.11.5",
+    "next": "latest",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }

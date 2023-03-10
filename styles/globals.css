@@ -1,3 +1,11 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
 
 
 
@@ -913,6 +921,9 @@ div.little-grid {
   margin: auto auto auto 10px;
   font-size: 14px;
 }
+.score-box[ungraded="true"] .score {
+  margin: auto 10px auto 10px;
+}
 .score-divide {
   margin: 8.5px auto auto 5px;
   font-size: 14px;
@@ -946,7 +957,7 @@ div.little-grid {
  }
  .score-box {
   margin: 20px 0 20px auto;
-  width: 100px;
+  width: auto;
  }
 }
 
@@ -1165,7 +1176,7 @@ div.little-grid {
   row-gap: 2px;
 }
 
-.large-course-card .course-assignments .assignment {
+.large-course-card .course-assignments .assignment, .latest-grid .assignment {
   cursor: pointer;
   height: 75px;
   background: rgb(245, 245, 245);
@@ -1177,7 +1188,9 @@ div.little-grid {
   transition: background 0.2s linear, outline 0.2s linear;
 }
 .course-assignments .assignment:hover,
-.course-assignments .assignment:active {
+.course-assignments .assignment:active,
+.latest-grid .assignment:hover, 
+.latest-grid .assignment:active {
   background: rgb(255, 255, 255);
   outline: 1px solid black;
 }
