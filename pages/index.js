@@ -49,7 +49,9 @@ class Api {
     return [data, lastTime];
   }
 
-  async call (method) {
+  async call (method, options={
+    parameterString: '',
+  }) {
     console.log(`calling method: ${method} with `, {
       username: this.username,
       password: this.password
@@ -64,7 +66,7 @@ class Api {
                   <skipLoginLog>0</skipLoginLog>
                   <parent>0</parent>
                   <webServiceHandleName>PXPWebServices</webServiceHandleName>
-                  <paramStr>&lt;Parms&gt;&lt;childIntId&gt;0&lt;/childIntId&gt;&lt;/Parms&gt;</paramStr>
+                  <paramStr>${options.parameterString || `&lt;Parms&gt;&lt;childIntId&gt;0&lt;/childIntId&gt;&lt;/Parms&gt;`}</paramStr>
                   <methodName>${method}</methodName>
               </ProcessWebServiceRequest>
           </soap:Body>
@@ -278,9 +280,35 @@ const initDashboard = async (storeCachedTime=false) => {
     }, 300)
 
 
-    return gradebook;
     //const [studentInfo, error1] = await API.call('StudentInfo');
     //console.log(studentInfo);
+
+    const [reportCardListResponse, reportCardListCallError] = await API.call('GetReportCardInitialData');
+    const reportCardList = reportCardListResponse.RCReportingPeriodData.RCReportingPeriods?.RCReportingPeriod;
+
+    console.log('report cards:', reportCardList);
+    getReportCards(reportCardList);
+
+    return gradebook;
+}
+
+const getReportCards = async (list) => {
+  list.forEach(async cardMeta => {
+    if (cardMeta.DocumentGU.value) {
+      const [reportCardResponse, reportCardCallError] = await API.call(`GetReportCardDocumentData`, {
+        parameterString: `&lt;Parms&gt;&lt;DocumentGU&gt;${cardMeta.DocumentGU.value}&lt;/DocumentGU&gt;&lt;/Parms&gt;`
+      })
+      const dataURL = reportCardResponse.DocumentData.Base64Code.value;
+      const fileName = reportCardResponse.DocumentData.FileName.value;
+      const blob = await createReportCardBlob(`data:text/plain;base64,${dataURL}`, fileName);
+      let url = URL.createObjectURL(blob)
+      console.log('Report card:', {blob, url});}
+  })
+}
+const createReportCardBlob = async (dataUrl, fileName) => {
+    const response = await fetch(dataUrl);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: 'application/pdf' });
 }
 
 const precision = (a) => {
@@ -1037,7 +1065,15 @@ const cumulativeGradePointAverageGraph = async (courses, start, step) => {
       
       let endOfDueDate = dayjs(essential.dueDate, "M/D/YYYY").endOf('day').unix();
 
-      if (!scorePossible || !pointsPossible || a.Notes.value?.includes('Not For Grading')) {
+      try {
+        let x = a.Notes.value?.includes('')
+      } catch (error) {
+        console.warn('whatt??', a)
+      }
+
+      if (!scorePossible || !pointsPossible 
+        || (typeof a.Notes.value === 'string' && a.Notes.value?.includes('Not For Grading'))
+      ) {
         raw.ungraded = true;
         console.warn(raw)
 

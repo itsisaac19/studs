@@ -900,7 +900,7 @@ div.little-grid {
   border-radius: 7px;
 }
 .score-box[ungraded="true"] {
-  width: max-content;
+  /* width: max-content; */
 }
 .score-box[ungraded="true"] {
   background: none;
@@ -940,26 +940,7 @@ div.little-grid {
   margin: auto 0 auto auto;
   font-size: 15px;
 }
-@media screen and (max-width: 600px) {
- .latest-assignment {
-    grid-template-columns: 1fr 1fr;
- } 
- .as-teacher {
-    display: none;
- }
- .sub-card {
-    margin: 0;
-    padding: 0px 1px;
- }
- .latest-label {
-    margin-top: 30px;
-    margin-left: 20px;
- }
- .score-box {
-  margin: 20px 0 20px auto;
-  width: auto;
- }
-}
+
 
 
 
@@ -1184,7 +1165,7 @@ div.little-grid {
   padding: 0 20px;
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: 7fr 4fr;
+  grid-template-columns: 7fr 4fr 150px;
   transition: background 0.2s linear, outline 0.2s linear;
 }
 .course-assignments .assignment:hover,
@@ -1228,6 +1209,28 @@ div.little-grid {
 }
 .large-course-card .score-box .score-divide {
   margin: 8.5px auto auto 5px;
+}
+
+@media screen and (max-width: 600px) {
+  .large-course-card .course-assignments .assignment, 
+  .latest-grid .assignment {
+    grid-template-columns: 1fr 1fr;
+ } 
+ .as-teacher {
+    display: none;
+ }
+ .sub-card {
+    margin: 0;
+    padding: 0px 1px;
+ }
+ .latest-label {
+    margin-top: 30px;
+    margin-left: 20px;
+ }
+ .score-box {
+  margin: 20px 0 20px auto;
+  width: auto;
+ }
 }
 
 .popper-cover {
