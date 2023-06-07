@@ -473,15 +473,15 @@ div.landing {
 }
 
 .landing h1 {
-  font-size: 68px;
+  font-size: clamp(52px, 5vw, 68px);
   font-weight: 500;
   font-weight: 600;
-  letter-spacing: -4px;
+  letter-spacing: -0.06em;
 }
 .landing p {
   font-size: 16px;
   line-height: 1.4em;
-  max-width: 70%;
+  max-width: 90%;
 }
 button.try {
   margin: 40px 0 0 0;
@@ -508,18 +508,25 @@ button.try {
 }
 
 .snippet {
-  width: 100%;
+  max-width: 800px;
   position: relative;
 }
 .snippet img {
-  position: absolute;
-  width: 40vw;
-  top: -50px;
-  left: -6vw;
+  width: 100%;
+  top: 50px;
 }
 
-@media screen and (max-width: 600px) {
-
+@media screen and (max-width: 900px) {
+  .tilt-mockup {
+    display: none;
+  }
+  #landing {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  div.landing {
+    margin:  10vh 35px 35px 35px;
+  }
 }
 
 #app.hide {

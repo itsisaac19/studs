@@ -906,6 +906,9 @@ const latestAssignmentsList = (rawAssignments) => {
       }
       if (count < 7) {
         let latestClone = card.cloneNode(true);
+        latestClone.addEventListener('click', (e) => {
+          assignmentHandler(a, e)
+        })
         latestGrid.appendChild(latestClone);
       } 
       count++
@@ -1666,10 +1669,11 @@ const updateGraphView = (graph, view, bucketsData) => {
           </div>
           <div role="main" className="landing">
             <h1>
-              Fast, insightful, beautiful, and safe.
-              <span className="slow">The next-gen StudentVUE Client.</span>
+            The 
+              <span className="slow"> StudentVUE </span>
+              you've been wanting.
             </h1>
-            <p>Studs was built for students, by students. Elegantly designed from edge to edge, with practicality and efficiency as a central aspect.
+            <p>With speed and performance as the highest priority, Studs was built for students, by students.
             </p>
             <button className="try">Try it →</button>
           </div>
@@ -1681,7 +1685,7 @@ const updateGraphView = (graph, view, bucketsData) => {
           </div>
           <div role="main" className="landing">
             <h1>
-              Detailed breakdowns and 
+              Detailed breakdowns and&nbsp;
               <span className="slow">color-coding</span>
             </h1>
             <p>A HSL color-coding algorithm adapts to significant impacts in grade weighing and calculation. The heavier the weight, the darker the color. 
@@ -1702,11 +1706,11 @@ const updateGraphView = (graph, view, bucketsData) => {
             <h1>
               Welcome to <span className="slow">Studs</span>. Login to get started.
             </h1>
-            <span>An enhanced experience of
+            <span>An enhanced experience of&nbsp;
               <a href="https://edupoint.com/Products/ParentVUE-StudentVUE" className="sv">
-                StudentVUE </a>&nbsp;&nbsp;&nbsp; for
+                StudentVUE </a>&nbsp;&nbsp;&nbsp; for&nbsp;
               <a href="https://www.moundsviewschools.org/moundsview">Mounds View High School</a>
-              students.
+              &nbsp;students.
             </span>
           </div>
           <div className="auth-form">
@@ -1727,8 +1731,8 @@ const updateGraphView = (graph, view, bucketsData) => {
           <section className="why">
             <h2>The big question — how does it <span className="fancy">work</span>?</h2>
             <p className="explain">
-              StudentVUE has created a database which developers are granted access to through an API (application programming interface). 
-              <br /><br /> We can then take a user's login credentials, send them to StudentVUE, and if they match the credentials that they have stored, it grants the developer access to 
+              StudentVUE has a database which data is accessed through an API. 
+              <br /><br /> We can then take a user's login credentials, send them to StudentVUE, and if they match the credentials that they have stored, it grants access to 
               the user's data. <br /> <br /> <b>At no point during this process are the user credentials exposed to the developer for extraction or exploitation.</b>
             </p>
             <h2 className="listen">Ok, but <span className="fancy2">why</span>?</h2>
