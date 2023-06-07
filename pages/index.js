@@ -284,10 +284,13 @@ const initDashboard = async (storeCachedTime=false) => {
     //console.log(studentInfo);
 
     const [reportCardListResponse, reportCardListCallError] = await API.call('GetReportCardInitialData');
-    const reportCardList = reportCardListResponse.RCReportingPeriodData.RCReportingPeriods?.RCReportingPeriod;
+    console.log({reportCardListResponse})
+    const reportCardList = reportCardListResponse.RCReportingPeriodData?.RCReportingPeriods?.RCReportingPeriod;
 
-    console.log('report cards:', reportCardList);
-    getReportCards(reportCardList);
+    if (reportCardList) {
+      console.log('report cards:', reportCardList);
+      getReportCards(reportCardList);
+    }
 
     return gradebook;
 }
@@ -902,7 +905,8 @@ const latestAssignmentsList = (rawAssignments) => {
         continue;
       }
       if (count < 7) {
-        latestGrid.appendChild(card);
+        let latestClone = card.cloneNode(true);
+        latestGrid.appendChild(latestClone);
       } 
       count++
     }
